@@ -3,9 +3,8 @@ package edu.java.bot.listener;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import java.util.List;
 import edu.java.bot.commands.CommandList;
-import edu.java.bot.service.MessagingService;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
