@@ -2,20 +2,18 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.service.MessagingService;
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.java.bot.model.Bot;
 
-public class NoCommand implements Command {
-    private final String answer="There is no such command";
-    private final MessagingService messagingService;
+public class NoCommand extends Command {
+    private final String answer = "There is no such command";
 
-    @Autowired
-    public NoCommand(MessagingService messagingService) {
-        this.messagingService = messagingService;
+    protected NoCommand(String name, String description, Bot bot) {
+        super(name, description, bot);
     }
+
     @Override
     public void execute(Update update) {
-        Message message=update.message();
-        messagingService.sendMessage(message.chat().id(),answer);
+        Message message = update.message();
+        super.getBot().sendMessage(message.chat().id(), answer);
     }
 }
