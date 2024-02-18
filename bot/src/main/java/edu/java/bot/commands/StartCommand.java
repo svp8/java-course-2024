@@ -3,12 +3,15 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.model.Bot;
+import edu.java.bot.model.CommandType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StartCommand extends Command {
-    private static final String START_MESSAGE = "New user registered";
+    public static final String START_MESSAGE = "New user registered";
 
-    protected StartCommand(String name, String description, Bot bot) {
-        super(name, description, bot);
+    protected StartCommand(Bot bot) {
+        super(CommandType.START, bot);
     }
 
     @Override

@@ -4,19 +4,16 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.Bot;
-import edu.java.bot.model.Link;
-import edu.java.bot.service.LinkService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ListCommandTest {
+class TrackCommandTest {
+
     Bot bot;
     Update update;
     Long chatId = 1234567824356L;
@@ -27,36 +24,21 @@ class ListCommandTest {
         update = Mockito.mock(Update.class);
         Message message = Mockito.mock(Message.class);
         Chat chat = Mockito.mock(Chat.class);
-        Mockito.when(message.text()).thenReturn("/list");
+
+        Mockito.when(message.text()).thenReturn("/track");
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(chat.id()).thenReturn(chatId);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.from()).thenReturn(new User(123L));
     }
-
     @Test
-    void testLinks() {
+    void testSendMessage() {
         //given
-        List<Link> expected = List.of(new Link("http://github.com"), new Link("http://test.com"));
-        var command = new ListCommand(bot, new LinkService(expected));
-
+        var command = new TrackCommand(bot);
         //when
-        command.execute(update);
+       command.execute(update);
 
         //then
-        Mockito.verify(bot).sendMessage(chatId, expected.toString());
-    }
-
-    @Test
-    void testNoLinks() {
-        //given
-        List<Link> list = new ArrayList<>();
-        var command = new ListCommand( bot, new LinkService(list));
-
-        //when
-        command.execute(update);
-
-        //then
-        Mockito.verify(bot).sendMessage(chatId, ListCommand.NO_LINKS);
+        Mockito.verify(bot).sendMessage(ArgumentMatchers.any(long.class), ArgumentMatchers.any(String.class));
     }
 }

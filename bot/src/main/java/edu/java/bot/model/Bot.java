@@ -3,44 +3,38 @@ package edu.java.bot.model;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
-import edu.java.bot.commands.Command;
-import edu.java.bot.commands.CommandList;
 import edu.java.bot.configuration.ApplicationConfig;
-import edu.java.bot.listener.BotUpdateListener;
-import edu.java.bot.service.LinkService;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Component
 public class Bot extends TelegramBot implements AutoCloseable {
     @Autowired
-    public Bot(ApplicationConfig applicationConfig, LinkService linkService) {
+    public Bot(ApplicationConfig applicationConfig, WebClient.Builder webClientBuilder) {
         super(applicationConfig.telegramToken());
-        CommandList commandList = new CommandList(this, linkService);
-        setUpdatesListener(new BotUpdateListener(commandList));
-        WebClient client = WebClient.builder()
+        WebClient client = webClientBuilder
             .baseUrl(String.format("https://api.telegram.org/bot%s", applicationConfig.telegramToken()))
             .build();
-        Map<String, List<Command>> map = new HashMap<>();
-        map.put("commands", new ArrayList<>(commandList.getCommandMap().values()));
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{\"commands\":[");
-        for (Command command : commandList.getCommandMap().values()) {
-            stringBuilder.append("{\"command\":\"").append(command.getName()).append("\",\n");
-            stringBuilder.append("\"description\":\"").append(command.getDescription()).append("\" \n},");
-        }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        stringBuilder.append("]}");
+        registerCommands(client);
+
+    }
+
+    private void registerCommands(WebClient client) {
+        List<SetCommandsRequest.CommandDto> commandDtos = new ArrayList<>();
+        Arrays.stream(CommandType.values()).forEach(commandType -> {
+            commandDtos.add(new SetCommandsRequest.CommandDto(commandType.getName(), commandType.getDescription()));
+        });
+        SetCommandsRequest setCommandsRequest = new SetCommandsRequest(commandDtos);
         client.post()
             .uri("/setmycommands")
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(stringBuilder.toString())
+            .body(Mono.just(setCommandsRequest), SetCommandsRequest.class)
             .retrieve()
             .bodyToMono(String.class)
             .block();
@@ -52,7 +46,7 @@ public class Bot extends TelegramBot implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         super.shutdown();
     }
 }

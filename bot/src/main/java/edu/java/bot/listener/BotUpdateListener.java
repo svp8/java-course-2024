@@ -4,16 +4,20 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.commands.CommandList;
+import edu.java.bot.model.Bot;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BotUpdateListener implements UpdatesListener {
     private final Logger logger = LogManager.getLogger();
     private final CommandList commandList;
 
-    public BotUpdateListener(CommandList commandList) {
+    public BotUpdateListener(CommandList commandList, Bot bot) {
         this.commandList = commandList;
+        bot.setUpdatesListener(this);
     }
 
     @Override

@@ -2,19 +2,18 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.model.Bot;
+import edu.java.bot.model.CommandType;
 import lombok.Getter;
 
 @Getter
 public abstract class Command {
-    private final String name;
-    private final String description;
     private final Bot bot;
+    private final CommandType type;
 
-    protected Command(String name, String description, Bot bot) {
-        this.name = name;
-        this.description = description;
+    protected Command(CommandType type, Bot bot) {
         this.bot = bot;
+        this.type = type;
     }
 
-    abstract public void execute(Update update);
+    public abstract void execute(Update update);
 }
