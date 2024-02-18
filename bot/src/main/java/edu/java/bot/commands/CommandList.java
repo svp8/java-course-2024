@@ -1,30 +1,21 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.Bot;
-import edu.java.bot.service.LinkService;
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Getter
+@Component
 public class CommandList {
-    private final Map<String, Command> commandMap;
-    private final NoCommand noCommand;
-    private final LinkService linkService;
-
-    public CommandList(Bot bot, LinkService linkService) {
-        this.commandMap = Collections.unmodifiableMap(Map.of(
-            "/start", new StartCommand("start", "register new user", bot),
-            "/help", new HelpCommand("help", "show all commands", bot, this),
-            "/track", new TrackCommand("track", "track link", bot),
-            "/untrack", new UntrackCommand("untrack", "untrack link", bot),
-            "/list", new ListCommand("list", "links list", bot, linkService)
-        ));
-        this.noCommand = new NoCommand("error", "shows on error", bot);
-        this.linkService = linkService;
-    }
+    @Autowired
+    private List<Command> commandList;
+    @Autowired
+    private NoCommand noCommand;
 
     public Command get(String name) {
-        return commandMap.getOrDefault(name, noCommand);
+        Optional<Command> command = commandList.stream().filter(x -> x.getType().getName().equals(name)).findAny();
+        return command.orElse(noCommand);
     }
 }
