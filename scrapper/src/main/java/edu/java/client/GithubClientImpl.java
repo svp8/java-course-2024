@@ -1,6 +1,7 @@
 package edu.java.client;
 
 import edu.java.dto.github.BranchDto;
+import edu.java.dto.github.PullRequestDto;
 import edu.java.dto.github.RepositoryDto;
 import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
@@ -41,5 +42,16 @@ public class GithubClientImpl implements GitHubClient {
         List<BranchDto> branches = responseSpec.bodyToMono(new ParameterizedTypeReference<List<BranchDto>>() {
         }).block();
         return branches;
+    }
+
+    @Override
+    public List<PullRequestDto> fetchPullRequestList(String repositoryName, String owner) {
+        WebClient.ResponseSpec responseSpec = webClient
+            .get()
+            .uri(String.format("/repos/%s/%s/branches", owner, repositoryName))
+            .retrieve();
+        List<PullRequestDto> list = responseSpec.bodyToMono(new ParameterizedTypeReference<List<PullRequestDto>>() {
+        }).block();
+        return list;
     }
 }

@@ -1,6 +1,7 @@
 package edu.java.dto.stack;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.time.OffsetDateTime;
@@ -10,7 +11,7 @@ import lombok.ToString;
 
 @ToString
 @EqualsAndHashCode
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AnswerDto {
     @Getter private int answerId;
     @JsonProperty("is_accepted")

@@ -1,4 +1,4 @@
-package edu.java.bot.model;
+package edu.java.bot.model.request;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -9,6 +9,6 @@ import lombok.Getter;
 public class SetCommandsRequest {
     List<CommandDto> commands;
 
-    record CommandDto(String command, String description) {
+    public record CommandDto(String command, String description) {
     }
 }

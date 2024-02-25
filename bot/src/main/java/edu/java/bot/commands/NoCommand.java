@@ -15,7 +15,7 @@ public class NoCommand extends Command {
     }
 
     @Override
-    public void execute(Update update) {
+    public void execute(Update update, boolean isInDialog) {
         Message message = update.message();
         super.getBot().sendMessage(message.chat().id(), answer);
     }

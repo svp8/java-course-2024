@@ -1,18 +1,14 @@
-package edu.java.bot.model;
+package edu.java.dto;
 
-import java.net.URI;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import java.net.URI;
 
 @AllArgsConstructor
 @Getter
-@EqualsAndHashCode
 public class Link {
     private URI uri;
-
-    public Link() {
-    }
+//    private long chatId;
 
     @Override public String toString() {
         return "Link{"

@@ -4,22 +4,22 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import edu.java.bot.client.ScrapperClient;
 import edu.java.bot.model.Bot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class TrackCommandTest {
-
+    ScrapperClient scrapperClient;
     Bot bot;
     Update update;
     Long chatId = 1234567824356L;
 
     @BeforeEach
     void init() {
+        scrapperClient=Mockito.mock(ScrapperClient.class);
         bot = Mockito.mock(Bot.class);
         update = Mockito.mock(Update.class);
         Message message = Mockito.mock(Message.class);
@@ -34,9 +34,9 @@ class TrackCommandTest {
     @Test
     void testSendMessage() {
         //given
-        var command = new TrackCommand(bot);
+        var command = new TrackCommand(bot,scrapperClient);
         //when
-       command.execute(update);
+       command.execute(update, false);
 
         //then
         Mockito.verify(bot).sendMessage(ArgumentMatchers.any(long.class), ArgumentMatchers.any(String.class));

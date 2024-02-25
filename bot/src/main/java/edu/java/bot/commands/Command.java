@@ -15,5 +15,5 @@ public abstract class Command {
         this.type = type;
     }
 
-    public abstract void execute(Update update);
+    public abstract void execute(Update update, boolean isInDialog);
 }

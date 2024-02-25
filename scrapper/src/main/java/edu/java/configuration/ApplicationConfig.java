@@ -1,5 +1,6 @@
 package edu.java.configuration;
 
+import edu.java.client.BotClient;
 import edu.java.client.GitHubClient;
 import edu.java.client.GithubClientImpl;
 import edu.java.client.StackOverflowClient;
@@ -17,7 +18,10 @@ public record ApplicationConfig(
     @NotNull
     Scheduler scheduler
 ) {
-
+    @Bean
+    public BotClient scrapperClient(@Value("client.bot.baseurl") String baseUrl) {
+        return new BotClient(baseUrl);
+    }
     @Bean
     public Scheduler scheduler() {
         return scheduler;

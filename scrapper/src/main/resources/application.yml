@@ -12,7 +12,11 @@ client:
     baseurl: https://api.github.com
   stack:
     baseurl: https://api.stackexchange.com/2.3/
-
+  bot:
+    baseurl: http://localhost:8090
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 server:
   port: 8080
 
