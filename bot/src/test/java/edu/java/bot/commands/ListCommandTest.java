@@ -4,17 +4,14 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.Link;
 import edu.java.bot.service.LinkService;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.ArrayList;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ListCommandTest {
     Bot bot;
@@ -51,7 +48,7 @@ class ListCommandTest {
     void testNoLinks() {
         //given
         List<Link> list = new ArrayList<>();
-        var command = new ListCommand( bot, new LinkService(list));
+        var command = new ListCommand(bot, new LinkService(list));
 
         //when
         command.execute(update);

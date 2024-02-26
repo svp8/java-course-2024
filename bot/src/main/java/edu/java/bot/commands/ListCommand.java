@@ -13,7 +13,7 @@ public class ListCommand extends Command {
     public static final String NO_LINKS = "0 links are being tracked ";
     private final LinkService linkService;
 
-    protected ListCommand(Bot bot, LinkService linkService) {
+    public ListCommand(Bot bot, LinkService linkService) {
         super(CommandType.LIST, bot);
         this.linkService = linkService;
     }
