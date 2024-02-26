@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class TrackCommandTest {
 
     Bot bot;
@@ -31,12 +29,13 @@ class TrackCommandTest {
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.from()).thenReturn(new User(123L));
     }
+
     @Test
     void testSendMessage() {
         //given
         var command = new TrackCommand(bot);
         //when
-       command.execute(update);
+        command.execute(update);
 
         //then
         Mockito.verify(bot).sendMessage(ArgumentMatchers.any(long.class), ArgumentMatchers.any(String.class));

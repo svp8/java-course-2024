@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class UntrackCommandTest {
 
     Bot bot;
@@ -31,6 +29,7 @@ class UntrackCommandTest {
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.from()).thenReturn(new User(123L));
     }
+
     @Test
     void testSendMessage() {
         //given

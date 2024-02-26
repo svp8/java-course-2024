@@ -6,15 +6,10 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.CommandType;
-import edu.java.bot.model.Link;
-import edu.java.bot.service.LinkService;
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.Arrays;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
 
 class HelpCommandTest {
     Bot bot;
@@ -34,6 +29,7 @@ class HelpCommandTest {
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.from()).thenReturn(new User(123L));
     }
+
     @Test
     void testSendMessage() {
         //given
@@ -46,7 +42,7 @@ class HelpCommandTest {
                 .append(" - ")
                 .append(commandType.getDescription())
                 .append("\n"));
-        String expected=stringBuilder.toString();
+        String expected = stringBuilder.toString();
         //when
         command.execute(update);
 

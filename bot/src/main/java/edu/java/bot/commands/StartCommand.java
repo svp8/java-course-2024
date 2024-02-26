@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class StartCommand extends Command {
     public static final String START_MESSAGE = "New user registered";
 
-    protected StartCommand(Bot bot) {
+    public StartCommand(Bot bot) {
         super(CommandType.START, bot);
     }
 
