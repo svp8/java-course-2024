@@ -16,6 +16,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -58,11 +59,36 @@ class ScrapperClientTest {
     }
 
     @Test
-    void untrackLink() {
+    void untrackLink() throws URISyntaxException {
+
+//        ObjectMapper mapper=new ObjectMapper();
+//        JsonNode node = mapper.valueToTree(link);
+        String testUrl = "/untrack";
+        stubFor(WireMock.post(urlEqualTo(testUrl))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json;charset=UTF-8")
+            ));
+        ScrapperClient scrapperClient = new ScrapperClient(wireMockServer.baseUrl());
+
+        scrapperClient.untrackLink(0,"http://test.com/test");
+
+        verify(postRequestedFor(urlEqualTo(testUrl)));
     }
 
     @Test
     void getLinkList() {
+        String testUrl = "/0/all";
+        stubFor(WireMock.get(urlEqualTo(testUrl))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json;charset=UTF-8")
+            ));
+        ScrapperClient scrapperClient = new ScrapperClient(wireMockServer.baseUrl());
+
+        scrapperClient.getLinkList(0);
+
+        verify(getRequestedFor(urlEqualTo(testUrl)));
     }
 
     @Test
@@ -72,15 +98,14 @@ class ScrapperClientTest {
         String testUrl = "/register/0";
         stubFor(WireMock.post(urlEqualTo(testUrl))
             .willReturn(aResponse()
-                .withStatus(403)
-                .
+                .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 ));
         ScrapperClient scrapperClient = new ScrapperClient(wireMockServer.baseUrl());
 
-        boolean actual = scrapperClient.registerChat(0);
+        scrapperClient.registerChat(0);
 
         verify(postRequestedFor(urlEqualTo(testUrl)));
-        Assertions.assertEquals(false, actual);
+
     }
 }

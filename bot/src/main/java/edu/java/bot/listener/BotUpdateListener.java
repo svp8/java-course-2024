@@ -11,34 +11,45 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 @Component
 public class BotUpdateListener implements UpdatesListener {
-    private final Logger logger = LogManager.getLogger();
+    private final Logger LOGGER = LogManager.getLogger();
     private final CommandList commandList;
     private final HashMap<Long, Command> chatState = new HashMap<>();
+    private final Bot bot;
 
     public BotUpdateListener(CommandList commandList, Bot bot) {
         this.commandList = commandList;
+        this.bot = bot;
         bot.setUpdatesListener(this);
     }
 
     @Override
     public int process(List<Update> list) {
+
         for (Update update : list) {
             Message message = update.message();
-            logger.info(message.text());
+            LOGGER.info(message.text());
             Long id = message.chat().id();
-            if (message.text().startsWith("/")) {
-                String commandIdentifier = message.text().split(" ")[0].toLowerCase();
-                Command command = commandList.get(commandIdentifier);
-                command.execute(update, false);
-                chatState.put(id, command);
-            } else if (chatState.containsKey(id)) {
-                chatState.get(id).execute(update, true);
-                chatState.remove(id);
+            try {
+                if (message.text().startsWith("/")) {
+                    String commandIdentifier = message.text().split(" ")[0].toLowerCase();
+                    Command command = commandList.get(commandIdentifier);
+                    command.execute(update, false);
+                    chatState.put(id, command);
+                } else if (chatState.containsKey(id)) {
+                    chatState.get(id).execute(update, true);
+                    chatState.remove(id);
+                }
+            } catch (Exception e) {
+                LOGGER.info(e);
+                bot.sendMessage(id,e.getMessage());
             }
+
         }
+
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 }

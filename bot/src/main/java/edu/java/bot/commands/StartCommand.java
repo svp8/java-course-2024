@@ -1,11 +1,12 @@
 package edu.java.bot.commands;
 
-import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.CommandType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Component
 public class StartCommand extends Command {
@@ -21,8 +22,14 @@ public class StartCommand extends Command {
     public void execute(Update update, boolean isInDialog) {
         if (!isInDialog) {
             Long chatId = update.message().chat().id();
-            scrapperClient.registerChat(chatId);
-            super.getBot().sendMessage(chatId, START_MESSAGE);
+            try {
+                scrapperClient.registerChat(chatId);
+                super.getBot().sendMessage(chatId, START_MESSAGE);
+            } catch (WebClientResponseException e) {
+                ScrapperException scrapperException = e.getResponseBodyAs(ScrapperException.class);
+                System.out.println(scrapperException.getDescription());
+                super.getBot().sendMessage(chatId, scrapperException.getDescription());
+            }
         }
     }
 }

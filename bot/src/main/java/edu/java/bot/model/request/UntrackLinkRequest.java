@@ -8,5 +8,5 @@ import lombok.Getter;
 @Getter
 public class UntrackLinkRequest {
     private long chatId;
-    private String linkId;
+    private String link;
 }

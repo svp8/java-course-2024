@@ -29,7 +29,7 @@ public class ScrapperController implements ScrapperControllerInterface {
     }
 
     @Override
-    @DeleteMapping("/untrack")
+    @PostMapping("/untrack")
     public ResponseEntity<Void> untrack(@RequestBody TrackLinkRequest request) {
         linkService.untrack(request.getLink(), request.getChatId());
         return ResponseEntity.ok().build();

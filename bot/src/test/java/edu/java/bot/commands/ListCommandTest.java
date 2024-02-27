@@ -7,6 +7,7 @@ import com.pengrad.telegrambot.model.User;
 import edu.java.bot.client.ScrapperClient;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.Link;
+import edu.java.bot.model.response.LinkListResponse;
 import edu.java.bot.service.LinkService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,7 @@ class ListCommandTest {
     void testLinks() throws URISyntaxException {
         //given
         List<Link> expected = List.of(new Link(new URI("http://github.com")), new Link(new URI("http://test.com")));
+        Mockito.when(scrapperClient.getLinkList(chatId)).thenReturn(new LinkListResponse(expected,0));
         var command = new ListCommand(bot, scrapperClient);
 
         //when
@@ -53,7 +55,7 @@ class ListCommandTest {
     @Test
     void testNoLinks() {
         //given
-        List<Link> list = new ArrayList<>();
+        Mockito.when(scrapperClient.getLinkList(chatId)).thenReturn(new LinkListResponse(null,0));
         var command = new ListCommand( bot, scrapperClient);
 
         //when

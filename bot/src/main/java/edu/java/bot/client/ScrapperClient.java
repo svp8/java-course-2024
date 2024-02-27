@@ -1,13 +1,9 @@
 package edu.java.bot.client;
 
-import edu.java.bot.exception.ScrapperException;
-import edu.java.bot.exception.SendMessageException;
 import edu.java.bot.model.Link;
 import edu.java.bot.model.request.TrackLinkRequest;
 import edu.java.bot.model.request.UntrackLinkRequest;
 import edu.java.bot.model.response.LinkListResponse;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
@@ -28,7 +24,7 @@ public class ScrapperClient {
         this.webClient = WebClient.create(BASE_URL);
     }
 
-    public Link trackLink(long chatId, String link) {
+    public Link trackLink(long chatId, String link) throws WebClientResponseException {
         WebClient.ResponseSpec responseSpec = webClient
             .post()
             .uri("/track")
@@ -38,49 +34,31 @@ public class ScrapperClient {
         return created;
     }
 
-    public String untrackLink(long chatId, String link) {
+    public void untrackLink(long chatId, String link) throws WebClientResponseException {
         WebClient.ResponseSpec responseSpec = webClient
             .post()
             .uri("/untrack")
             .body(Mono.just(new UntrackLinkRequest(chatId, link)), UntrackLinkRequest.class)
             .retrieve();
-        try {
-            responseSpec.toBodilessEntity().onErrorComplete().block();
-            return "untracked";
-        } catch (WebClientResponseException e) {
-            ScrapperException scrapperException =e.getResponseBodyAs(ScrapperException.class);
-            System.out.println(scrapperException.getDescription());
-            return scrapperException.getDescription();
-        }
+        responseSpec.toBodilessEntity().block();
     }
 
-    public LinkListResponse getLinkList(long chatId) {
+    public LinkListResponse getLinkList(long chatId) throws WebClientResponseException {
         WebClient.ResponseSpec responseSpec = webClient
             .get()
             .uri(String.format("/%d/all", chatId))
             .retrieve();
-        try {
-            LinkListResponse response = responseSpec.bodyToMono(LinkListResponse.class).block();
-            return response;
-        } catch (WebClientResponseException e) {
-            ScrapperException scrapperException =e.getResponseBodyAs(ScrapperException.class);
-            System.out.println(scrapperException.getDescription());
-            return null;
-        }
+        LinkListResponse response = responseSpec.bodyToMono(LinkListResponse.class).block();
+        return response;
+
     }
 
-    public String registerChat(long chatId) {
+    public void registerChat(long chatId) throws WebClientResponseException {
         WebClient.ResponseSpec responseSpec = webClient
             .post()
             .uri(String.format("/register/%d", chatId))
             .retrieve();
-        try {
-            responseSpec.toBodilessEntity().block();
-            return "registered ";
-        } catch (WebClientResponseException e) {
-            ScrapperException scrapperException =e.getResponseBodyAs(ScrapperException.class);
-            System.out.println(scrapperException.getDescription());
-            return scrapperException.getDescription();
-        }
+        responseSpec.toBodilessEntity().block();
+
     }
 }

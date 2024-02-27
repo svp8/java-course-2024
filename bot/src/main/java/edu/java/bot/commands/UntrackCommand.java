@@ -2,16 +2,20 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.CommandType;
 import edu.java.bot.model.Link;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Component
 public class UntrackCommand extends Command {
+    public static final String NO_SUCH_LINK_NUMBER = "No such link number";
+    public static final String WRONG_INPUT_FORMAT = "Wrong input format (send number)";
     private final ScrapperClient scrapperClient;
     private final Map<Long, List<Link>> linksByChat;
 
@@ -43,13 +47,20 @@ public class UntrackCommand extends Command {
                 int number = Integer.parseInt(update.message().text());
                 List<Link> links = linksByChat.get(chatId);
                 if (number > 0 && number <= links.size()) {
-                    scrapperClient.untrackLink(chatId, links.get(number - 1).getUri().toString());
-                    super.getBot().sendMessage(chatId, update.message().text() + " untracked");
+                    try {
+                        scrapperClient.untrackLink(chatId, links.get(number - 1).getUri().toString());
+                        super.getBot().sendMessage(chatId, update.message().text() + " untracked");
+                    }
+                    catch(WebClientResponseException e){
+                        ScrapperException scrapperException =e.getResponseBodyAs(ScrapperException.class);
+                        System.out.println(scrapperException.getDescription());
+                        super.getBot().sendMessage(chatId, scrapperException.getDescription());
+                    }
                 } else {
-                    super.getBot().sendMessage(chatId, "No such link number");
+                    super.getBot().sendMessage(chatId, NO_SUCH_LINK_NUMBER);
                 }
             } else {
-                super.getBot().sendMessage(chatId, "Wrong input format (send number)");
+                super.getBot().sendMessage(chatId, WRONG_INPUT_FORMAT);
             }
             linksByChat.remove(chatId);
         }
