@@ -1,10 +1,6 @@
 package edu.java.service;
 
-import edu.java.dto.Chat;
 import edu.java.dto.Link;
-import edu.java.exception.DuplicateLinkException;
-import edu.java.exception.InvalidChatIdException;
-import edu.java.exception.NoSuchLinkException;
 import java.util.List;
 import java.util.Optional;
 

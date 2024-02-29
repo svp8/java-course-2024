@@ -62,7 +62,7 @@ class StackOverflowClientImplTest {
     }
 
     @Test
-    void getAllBatches() {
+    void getAllComments() {
         CommentDto[] expectedDto = new CommentDto[] {new CommentDto(1, 1, "213", "21", true, offsetDateTime),
             new CommentDto(2, 1, "213", "21", true, offsetDateTime)};
         GeneralResponse<CommentDto> expected = new GeneralResponse<>();

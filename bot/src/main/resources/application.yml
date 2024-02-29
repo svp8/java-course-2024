@@ -10,7 +10,7 @@ spring:
     time-zone: UTC
 client:
   scrapper:
-    baseurl: http://localhost:8080
+    baseurl: http://localhost:8081
 server:
   port: 8090
 

@@ -8,26 +8,24 @@ public class BotClient {
     public static final String BASE_URL = "http://localhost/8080";
     private final WebClient webClient;
 
-    public BotClient(String baseUrl) {
+    public BotClient(String baseUrl,WebClient.Builder builder) {
         if (baseUrl == null || baseUrl.isBlank()) {
-            this.webClient = WebClient.create(BASE_URL);
+            this.webClient = builder.baseUrl(BASE_URL).build();
         } else {
             this.webClient = WebClient.create(baseUrl);
         }
     }
 
-    public BotClient() {
-        this.webClient = WebClient.create(BASE_URL);
+    public BotClient(WebClient.Builder builder) {
+        this.webClient = builder.baseUrl(BASE_URL).build();
     }
 
-
-    public String sendUpdate(UpdateRequest updateRequest) {
+    public void sendUpdate(UpdateRequest updateRequest) {
         WebClient.ResponseSpec responseSpec = webClient
             .post()
             .uri("/send")
             .body(Mono.just(updateRequest), UpdateRequest.class)
             .retrieve();
-        String response = responseSpec.bodyToMono(String.class).block();
-        return response;
+        responseSpec.toBodilessEntity().block();
     }
 }

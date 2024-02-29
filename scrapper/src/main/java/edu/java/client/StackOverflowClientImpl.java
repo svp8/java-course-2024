@@ -11,16 +11,16 @@ public class StackOverflowClientImpl implements StackOverflowClient {
     public static final String SITE_STACKOVERFLOW = "site=stackoverflow";
     private final WebClient webClient;
 
-    public StackOverflowClientImpl(String baseUrl) {
+    public StackOverflowClientImpl(String baseUrl,WebClient.Builder builder) {
         if (baseUrl == null || baseUrl.isBlank()) {
-            this.webClient = WebClient.create(BASE_URL);
+            this.webClient = builder.baseUrl(BASE_URL).build();
         } else {
             this.webClient = WebClient.create(baseUrl);
         }
     }
 
-    public StackOverflowClientImpl() {
-        this.webClient = WebClient.create(BASE_URL);
+    public StackOverflowClientImpl(WebClient.Builder builder) {
+        this.webClient = builder.baseUrl(BASE_URL).build();
     }
 
     @Override

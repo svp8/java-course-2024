@@ -11,16 +11,16 @@ public class GithubClientImpl implements GitHubClient {
     public static final String BASE_URL = "https://api.github.com";
     private final WebClient webClient;
 
-    public GithubClientImpl(String baseUrl) {
+    public GithubClientImpl(String baseUrl,WebClient.Builder builder) {
         if (baseUrl == null || baseUrl.isBlank()) {
-            this.webClient = WebClient.create(BASE_URL);
+            this.webClient = builder.baseUrl(BASE_URL).build();
         } else {
             this.webClient = WebClient.create(baseUrl);
         }
     }
 
-    public GithubClientImpl() {
-        this.webClient = WebClient.create(BASE_URL);
+    public GithubClientImpl(WebClient.Builder builder) {
+        this.webClient = builder.baseUrl(BASE_URL).build();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class GithubClientImpl implements GitHubClient {
     public List<PullRequestDto> fetchPullRequestList(String repositoryName, String owner) {
         WebClient.ResponseSpec responseSpec = webClient
             .get()
-            .uri(String.format("/repos/%s/%s/branches", owner, repositoryName))
+            .uri(String.format("/repos/%s/%s/pulls", owner, repositoryName))
             .retrieve();
         List<PullRequestDto> list = responseSpec.bodyToMono(new ParameterizedTypeReference<List<PullRequestDto>>() {
         }).block();

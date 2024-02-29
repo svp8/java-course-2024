@@ -12,16 +12,16 @@ public class ScrapperClient {
     public static final String BASE_URL = "http://localhost:8080";
     private final WebClient webClient;
 
-    public ScrapperClient(String baseUrl) {
+    public ScrapperClient(String baseUrl,WebClient.Builder builder) {
         if (baseUrl == null || baseUrl.isBlank()) {
-            this.webClient = WebClient.create(BASE_URL);
+            this.webClient = builder.baseUrl(BASE_URL).build();
         } else {
             this.webClient = WebClient.create(baseUrl);
         }
     }
 
-    public ScrapperClient() {
-        this.webClient = WebClient.create(BASE_URL);
+    public ScrapperClient(WebClient.Builder builder) {
+        this.webClient = builder.baseUrl(BASE_URL).build();
     }
 
     public Link trackLink(long chatId, String link) throws WebClientResponseException {

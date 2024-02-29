@@ -31,7 +31,6 @@ class StartCommandTest {
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(chat.id()).thenReturn(chatId);
         Mockito.when(update.message()).thenReturn(message);
-        Mockito.when(message.from()).thenReturn(new User(123L));
     }
 
     @Test
