@@ -15,7 +15,10 @@ public record ApplicationConfig(
     String telegramToken
 ) {
     @Bean
-    public ScrapperClient scrapperClient(@Value("${client.scrapper.baseurl}") String baseUrl, WebClient.Builder builder) {
-        return new ScrapperClient(baseUrl,builder);
+    public ScrapperClient scrapperClient(
+        @Value("${client.scrapper.baseurl}") String baseUrl,
+        WebClient.Builder builder
+    ) {
+        return new ScrapperClient(baseUrl, builder);
     }
 }

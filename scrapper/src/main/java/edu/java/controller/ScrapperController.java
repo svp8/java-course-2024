@@ -51,7 +51,7 @@ public class ScrapperController implements ScrapperControllerInterface {
         @ApiResponse(responseCode = "400", description = "Bad Uri", content =
             {
                 @Content(mediaType = "application/json", schema =
-                @Schema(implementation =  URIException.class))
+                @Schema(implementation = URIException.class))
             }
         ),
     })
@@ -72,7 +72,7 @@ public class ScrapperController implements ScrapperControllerInterface {
                 @Schema(implementation = InvalidChatIdException.class))
             }
         ),
-        @ApiResponse(responseCode = "404", description =  "No such link", content =
+        @ApiResponse(responseCode = "404", description = "No such link", content =
             {
                 @Content(mediaType = "application/json", schema =
                 @Schema(implementation = NoSuchLinkException.class))

@@ -1,7 +1,6 @@
 package edu.java.controller;
 
 import edu.java.dto.Link;
-import java.util.List;
 import edu.java.dto.LinkListResponse;
 import edu.java.dto.request.TrackLinkRequest;
 import org.springframework.http.ResponseEntity;

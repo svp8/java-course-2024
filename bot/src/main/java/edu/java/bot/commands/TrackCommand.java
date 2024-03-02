@@ -8,8 +8,6 @@ import edu.java.bot.model.CommandType;
 import edu.java.bot.model.Link;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 @Component
 public class TrackCommand extends Command {
@@ -34,12 +32,11 @@ public class TrackCommand extends Command {
                 .text()
                 .substring(CommandType.TRACK.getName().length() + 1)
                 .trim();
-            try{
+            try {
                 Link link = scrapperClient.trackLink(chatId, uri);
                 super.getBot().sendMessage(chatId, "tracking " + link.getUri().toString());
-            }catch(WebClientResponseException e){
-                ScrapperException scrapperException =e.getResponseBodyAs(ScrapperException.class);
-                System.out.println(scrapperException.getDescription());
+            } catch (WebClientResponseException e) {
+                ScrapperException scrapperException = e.getResponseBodyAs(ScrapperException.class);
                 super.getBot().sendMessage(chatId, scrapperException.getDescription());
             }
         }

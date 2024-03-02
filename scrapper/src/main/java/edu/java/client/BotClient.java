@@ -8,7 +8,7 @@ public class BotClient {
     public static final String BASE_URL = "http://localhost/8080";
     private final WebClient webClient;
 
-    public BotClient(String baseUrl,WebClient.Builder builder) {
+    public BotClient(String baseUrl, WebClient.Builder builder) {
         if (baseUrl == null || baseUrl.isBlank()) {
             this.webClient = builder.baseUrl(BASE_URL).build();
         } else {

@@ -11,7 +11,7 @@ public class GithubClientImpl implements GitHubClient {
     public static final String BASE_URL = "https://api.github.com";
     private final WebClient webClient;
 
-    public GithubClientImpl(String baseUrl,WebClient.Builder builder) {
+    public GithubClientImpl(String baseUrl, WebClient.Builder builder) {
         if (baseUrl == null || baseUrl.isBlank()) {
             this.webClient = builder.baseUrl(BASE_URL).build();
         } else {

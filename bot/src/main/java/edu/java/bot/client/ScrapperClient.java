@@ -12,7 +12,7 @@ public class ScrapperClient {
     public static final String BASE_URL = "http://localhost:8080";
     private final WebClient webClient;
 
-    public ScrapperClient(String baseUrl,WebClient.Builder builder) {
+    public ScrapperClient(String baseUrl, WebClient.Builder builder) {
         if (baseUrl == null || baseUrl.isBlank()) {
             this.webClient = builder.baseUrl(BASE_URL).build();
         } else {

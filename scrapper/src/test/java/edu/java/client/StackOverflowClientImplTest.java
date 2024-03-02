@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.reactive.function.client.WebClient;
 import wiremock.com.fasterxml.jackson.databind.JsonNode;
 import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
 import wiremock.com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -26,7 +27,7 @@ import static edu.java.client.StackOverflowClientImpl.SITE_STACKOVERFLOW;
 class StackOverflowClientImplTest {
     public static WireMockServer wireMockServer = new WireMockServer();
     OffsetDateTime offsetDateTime = OffsetDateTime.of(2000, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
-
+    StackOverflowClientImpl stackOverflowClient = new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
     @BeforeAll
     static void init() {
         wireMockServer.start();
@@ -53,7 +54,6 @@ class StackOverflowClientImplTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 .withJsonBody(node)));
-        StackOverflowClientImpl stackOverflowClient = new StackOverflowClientImpl(wireMockServer.baseUrl());
 
         AnswerDto[] actual = stackOverflowClient.getAnswersByQuestionId(0).getItems();
 
@@ -76,7 +76,6 @@ class StackOverflowClientImplTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 .withJsonBody(node)));
-        StackOverflowClientImpl stackOverflowClient = new StackOverflowClientImpl(wireMockServer.baseUrl());
 
         CommentDto[] actual = stackOverflowClient.getCommentsByQuestionId(0).getItems();
 

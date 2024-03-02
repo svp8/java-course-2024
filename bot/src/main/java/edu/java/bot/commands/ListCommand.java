@@ -35,7 +35,6 @@ public class ListCommand extends Command {
                 super.getBot().sendMessage(chatId, linksString);
             } catch (WebClientResponseException e) {
                 ScrapperException scrapperException = e.getResponseBodyAs(ScrapperException.class);
-                System.out.println(scrapperException.getDescription());
                 super.getBot().sendMessage(chatId, scrapperException.getDescription());
             }
         }

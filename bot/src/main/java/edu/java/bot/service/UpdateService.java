@@ -6,8 +6,8 @@ import edu.java.bot.model.Bot;
 import edu.java.bot.model.request.UpdateRequest;
 import edu.java.bot.model.scrapper.LinkUpdate;
 import edu.java.bot.model.scrapper.Update;
-import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UpdateService {
@@ -26,6 +26,7 @@ public class UpdateService {
             }
         }
     }
+
     public String formatUpdates(List<LinkUpdate> linkUpdates) {
         StringBuilder stringBuilder = new StringBuilder();
         for (LinkUpdate linkUpdate : linkUpdates) {

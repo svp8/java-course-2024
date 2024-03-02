@@ -27,7 +27,6 @@ public class StartCommand extends Command {
                 super.getBot().sendMessage(chatId, START_MESSAGE);
             } catch (WebClientResponseException e) {
                 ScrapperException scrapperException = e.getResponseBodyAs(ScrapperException.class);
-                System.out.println(scrapperException.getDescription());
                 super.getBot().sendMessage(chatId, scrapperException.getDescription());
             }
         }

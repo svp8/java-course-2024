@@ -11,11 +11,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 @Component
 public class BotUpdateListener implements UpdatesListener {
-    private final Logger LOGGER = LogManager.getLogger();
+    private final static Logger LOGGER = LogManager.getLogger();
     private final CommandList commandList;
     private final HashMap<Long, Command> chatState = new HashMap<>();
     private final Bot bot;
@@ -45,7 +44,7 @@ public class BotUpdateListener implements UpdatesListener {
                 }
             } catch (Exception e) {
                 LOGGER.info(e);
-                bot.sendMessage(id,e.getMessage());
+                bot.sendMessage(id, e.getMessage());
             }
 
         }

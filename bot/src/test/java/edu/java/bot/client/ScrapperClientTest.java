@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.reactive.function.client.WebClient;
 import wiremock.com.fasterxml.jackson.databind.JsonNode;
 import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ScrapperClientTest {
     public static WireMockServer wireMockServer = new WireMockServer();
-
+    ScrapperClient scrapperClient = new ScrapperClient(wireMockServer.baseUrl(), WebClient.builder());
     @BeforeAll
     static void init() {
         wireMockServer.start();
@@ -50,7 +51,6 @@ class ScrapperClientTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 .withJsonBody(node)));
-        ScrapperClient scrapperClient = new ScrapperClient(wireMockServer.baseUrl());
 
         Link actual = scrapperClient.trackLink(0, "http://test.com/test");
 
@@ -69,7 +69,7 @@ class ScrapperClientTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
             ));
-        ScrapperClient scrapperClient = new ScrapperClient(wireMockServer.baseUrl());
+
 
         scrapperClient.untrackLink(0,"http://test.com/test");
 
@@ -84,7 +84,7 @@ class ScrapperClientTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
             ));
-        ScrapperClient scrapperClient = new ScrapperClient(wireMockServer.baseUrl());
+
 
         scrapperClient.getLinkList(0);
 
@@ -101,7 +101,7 @@ class ScrapperClientTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 ));
-        ScrapperClient scrapperClient = new ScrapperClient(wireMockServer.baseUrl());
+
 
         scrapperClient.registerChat(0);
 

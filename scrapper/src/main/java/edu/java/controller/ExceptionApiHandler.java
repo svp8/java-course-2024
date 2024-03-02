@@ -25,6 +25,7 @@ public class ExceptionApiHandler {
     public ResponseEntity<NoSuchLinkException> noSuchLinkException(NoSuchLinkException e) {
         return ResponseEntity.status(e.getErrorCode()).body(e);
     }
+
     @ExceptionHandler(URIException.class)
     public ResponseEntity<URIException> noSuchLinkException(URIException e) {
         return ResponseEntity.status(e.getErrorCode()).body(e);

@@ -6,11 +6,11 @@ import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.CommandType;
 import edu.java.bot.model.Link;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Component
 public class UntrackCommand extends Command {
@@ -25,23 +25,36 @@ public class UntrackCommand extends Command {
         this.linksByChat = new HashMap<>();
     }
 
+    /**
+     * Gets list of links of specific chat and sends it to chat
+     * @param chatId chatid
+     */
+    private void sendList(Long chatId) {
+        List<Link> links = scrapperClient.getLinkList(chatId).getLinks();
+        linksByChat.put(chatId, links);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < links.size(); i++) {
+            stringBuilder.append((i + 1))
+                .append(". ")
+                .append(links.get(i)
+                    .getUri()
+                    .toString())
+                .append("\n");
+        }
+        stringBuilder.append("Choose number of link to untrack");
+        super.getBot().sendMessage(chatId, stringBuilder.toString());
+    }
+
     @Override
     public void execute(Update update, boolean isInDialog) {
         Long chatId = update.message().chat().id();
         if (!isInDialog) {
-            List<Link> links = scrapperClient.getLinkList(chatId).getLinks();
-            linksByChat.put(chatId, links);
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < links.size(); i++) {
-                stringBuilder.append((i + 1))
-                    .append(". ")
-                    .append(links.get(i)
-                        .getUri()
-                        .toString())
-                    .append("\n");
+            try {
+                sendList(chatId);
+            } catch (WebClientResponseException e) {
+                ScrapperException scrapperException = e.getResponseBodyAs(ScrapperException.class);
+                super.getBot().sendMessage(chatId, scrapperException.getDescription());
             }
-            stringBuilder.append("Choose number of link to untrack");
-            super.getBot().sendMessage(chatId, stringBuilder.toString());
         } else {
             if (isNumeric(update.message().text())) {
                 int number = Integer.parseInt(update.message().text());
@@ -50,10 +63,8 @@ public class UntrackCommand extends Command {
                     try {
                         scrapperClient.untrackLink(chatId, links.get(number - 1).getUri().toString());
                         super.getBot().sendMessage(chatId, update.message().text() + " untracked");
-                    }
-                    catch(WebClientResponseException e){
-                        ScrapperException scrapperException =e.getResponseBodyAs(ScrapperException.class);
-                        System.out.println(scrapperException.getDescription());
+                    } catch (WebClientResponseException e) {
+                        ScrapperException scrapperException = e.getResponseBodyAs(ScrapperException.class);
                         super.getBot().sendMessage(chatId, scrapperException.getDescription());
                     }
                 } else {

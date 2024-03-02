@@ -39,9 +39,7 @@ public class LinkServiceImpl implements LinkService {
     }
 
     public Link track(String name, long chatId) {
-        if (!inMemoryDb.containsKey(chatId)) {
-            throw new InvalidChatIdException(HttpStatus.NOT_FOUND.value(), CHAT_ISN_T_REGISTERED);
-        }
+        checkChatIdInDb(chatId);
         Optional<Link> link = getByNameAndChatId(name, chatId);
         if (link.isPresent()) {
             throw new DuplicateLinkException(HttpStatus.BAD_REQUEST.value(), "Link is already tracked");
@@ -65,9 +63,7 @@ public class LinkServiceImpl implements LinkService {
     }
 
     public void untrack(String name, long chatId) {
-        if (!inMemoryDb.containsKey(chatId)) {
-            throw new InvalidChatIdException(HttpStatus.NOT_FOUND.value(), CHAT_ISN_T_REGISTERED);
-        }
+        checkChatIdInDb(chatId);
         Optional<Link> link = getByNameAndChatId(name.trim(), chatId);
         if (link.isPresent()) {
             //delete in db
@@ -78,11 +74,15 @@ public class LinkServiceImpl implements LinkService {
         }
     }
 
-    public List<Link> getAllByChatId(long chatId) {
+    private void checkChatIdInDb(long chatId) {
         //if no such chat in db, throw exception
         if (!inMemoryDb.containsKey(chatId)) {
             throw new InvalidChatIdException(HttpStatus.NOT_FOUND.value(), CHAT_ISN_T_REGISTERED);
         }
+    }
+
+    public List<Link> getAllByChatId(long chatId) {
+        checkChatIdInDb(chatId);
         return inMemoryDb.get(chatId);
     }
 }

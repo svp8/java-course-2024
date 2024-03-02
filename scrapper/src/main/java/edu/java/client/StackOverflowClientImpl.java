@@ -11,7 +11,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
     public static final String SITE_STACKOVERFLOW = "site=stackoverflow";
     private final WebClient webClient;
 
-    public StackOverflowClientImpl(String baseUrl,WebClient.Builder builder) {
+    public StackOverflowClientImpl(String baseUrl, WebClient.Builder builder) {
         if (baseUrl == null || baseUrl.isBlank()) {
             this.webClient = builder.baseUrl(BASE_URL).build();
         } else {
