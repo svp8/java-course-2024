@@ -1,5 +1,19 @@
 package edu.java.scrapper;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import liquibase.Contexts;
+import liquibase.LabelExpression;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.DirectoryResourceAccessor;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
@@ -17,11 +31,27 @@ public abstract class IntegrationTest {
             .withPassword("postgres");
         POSTGRES.start();
 
-        runMigrations(POSTGRES);
+        try {
+            runMigrations(POSTGRES);
+        } catch (LiquibaseException | SQLException | FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private static void runMigrations(JdbcDatabaseContainer<?> c) {
-        // ...
+    private static void runMigrations(JdbcDatabaseContainer<?> c)
+        throws LiquibaseException, SQLException, FileNotFoundException {
+        Connection connection = DriverManager.getConnection(
+            POSTGRES.getJdbcUrl(),
+            POSTGRES.getUsername(),
+            POSTGRES.getPassword()
+        );
+        Database database =
+            DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+        Path pathToChangeLog = new File("").getAbsoluteFile().toPath().getParent().resolve("migrations");
+        Liquibase liquibase =
+            new liquibase.Liquibase("master.xml", new DirectoryResourceAccessor(pathToChangeLog), database);
+        liquibase.update(new Contexts(), new LabelExpression());
+        connection.close();
     }
 
     @DynamicPropertySource
