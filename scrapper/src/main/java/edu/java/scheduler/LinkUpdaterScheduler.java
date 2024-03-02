@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 public class LinkUpdaterScheduler {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    @Scheduled(fixedDelayString = "#{scheduler.interval}")
+    @Scheduled(fixedDelayString = "#{T(org.springframework.boot.convert.DurationStyle)"
+        + ".detectAndParse('${app.scheduler.interval}')}")
     public void update() {
         LOGGER.info("Link updated");
     }

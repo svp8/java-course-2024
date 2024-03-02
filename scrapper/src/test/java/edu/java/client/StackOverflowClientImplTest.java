@@ -5,18 +5,17 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.dto.stack.AnswerDto;
 import edu.java.dto.stack.BadgeDto;
 import edu.java.dto.stack.GeneralResponse;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.reactive.function.client.WebClient;
 import wiremock.com.fasterxml.jackson.databind.JsonNode;
 import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
 import wiremock.com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import wiremock.com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Arrays;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -40,6 +39,7 @@ class StackOverflowClientImplTest {
 
     @Test
     void getAnswersByQuestionId() {
+        //given
         AnswerDto[] expectedDto =
             new AnswerDto[] {new AnswerDto(1, true, 12, offsetDateTime), new AnswerDto(2, true, 12, offsetDateTime)};
         GeneralResponse<AnswerDto> expected = new GeneralResponse<>();
@@ -54,16 +54,18 @@ class StackOverflowClientImplTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 .withJsonBody(node)));
-        StackOverflowClientImpl stackOverflowClient = new StackOverflowClientImpl(wireMockServer.baseUrl());
-
+        StackOverflowClientImpl stackOverflowClient =
+            new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
+//when
         AnswerDto[] actual = stackOverflowClient.getAnswersByQuestionId(0).getItems();
-
+//actual
         verify(getRequestedFor(urlEqualTo(testUrl)));
         Assertions.assertArrayEquals(expectedDto, actual);
     }
 
     @Test
     void getAllBatches() {
+        //given
         BadgeDto[] expectedDto = new BadgeDto[] {new BadgeDto("123", 1, "213", 21, "test", "test1"),
             new BadgeDto("1231aa", 21, "213ds", 21, "test", "test2")};
         GeneralResponse<BadgeDto> expected = new GeneralResponse<>();
@@ -71,16 +73,18 @@ class StackOverflowClientImplTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         JsonNode node = mapper.valueToTree(expected);
-        String testUrl = "/badges?"+SITE_STACKOVERFLOW;
+
+        String testUrl = "/badges?" + SITE_STACKOVERFLOW;
         stubFor(WireMock.get(urlEqualTo(testUrl))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 .withJsonBody(node)));
-        StackOverflowClientImpl stackOverflowClient = new StackOverflowClientImpl(wireMockServer.baseUrl());
-
+        StackOverflowClientImpl stackOverflowClient =
+            new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
+//when
         BadgeDto[] actual = stackOverflowClient.getAllBadges().getItems();
-
+//actual
         verify(getRequestedFor(urlEqualTo(testUrl)));
         Assertions.assertArrayEquals(expectedDto, actual);
     }

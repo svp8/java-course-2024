@@ -4,35 +4,23 @@ import edu.java.client.GitHubClient;
 import edu.java.client.GithubClientImpl;
 import edu.java.client.StackOverflowClient;
 import edu.java.client.StackOverflowClientImpl;
-import jakarta.validation.constraints.NotNull;
-import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 
-@Validated
-@ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
-public record ApplicationConfig(
-    @NotNull
-    Scheduler scheduler
-) {
-
+@Configuration
+public class ApplicationConfig {
     @Bean
-    public Scheduler scheduler() {
-        return scheduler;
+    public GitHubClient gitHubClient(@Value("${client.github.baseurl}") String baseUrl, WebClient.Builder builder) {
+        return new GithubClientImpl(baseUrl, builder);
     }
 
     @Bean
-    public GitHubClient gitHubClient(@Value("client.github.baseurl") String baseUrl) {
-        return new GithubClientImpl(baseUrl);
-    }
-
-    @Bean
-    public StackOverflowClient stackOverflowClient(@Value("client.stack.baseurl") String baseUrl) {
-        return new StackOverflowClientImpl(baseUrl);
-    }
-
-    public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
+    public StackOverflowClient stackOverflowClient(
+        @Value("${client.stack.baseurl}") String baseUrl,
+        WebClient.Builder builder
+    ) {
+        return new StackOverflowClientImpl(baseUrl, builder);
     }
 }
