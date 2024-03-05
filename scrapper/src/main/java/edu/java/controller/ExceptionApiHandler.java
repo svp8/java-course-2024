@@ -2,6 +2,8 @@ package edu.java.controller;
 
 import edu.java.exception.DuplicateLinkException;
 import edu.java.exception.InvalidChatIdException;
+import edu.java.exception.InvalidLinkFormatException;
+import edu.java.exception.LinkNotTrackedException;
 import edu.java.exception.NoSuchLinkException;
 import edu.java.exception.URIException;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,16 @@ public class ExceptionApiHandler {
 
     @ExceptionHandler(NoSuchLinkException.class)
     public ResponseEntity<NoSuchLinkException> noSuchLinkException(NoSuchLinkException e) {
+        return ResponseEntity.status(e.getErrorCode()).body(e);
+    }
+
+    @ExceptionHandler(LinkNotTrackedException.class)
+    public ResponseEntity<LinkNotTrackedException> linkNotTrackedException(LinkNotTrackedException e) {
+        return ResponseEntity.status(e.getErrorCode()).body(e);
+    }
+
+    @ExceptionHandler(InvalidLinkFormatException.class)
+    public ResponseEntity<InvalidLinkFormatException> invalidLinkFormatException(InvalidLinkFormatException e) {
         return ResponseEntity.status(e.getErrorCode()).body(e);
     }
 

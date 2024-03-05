@@ -7,59 +7,70 @@ import edu.java.dto.Link;
 import edu.java.dto.LinkUpdate;
 import edu.java.dto.Update;
 import edu.java.dto.github.BranchDto;
+import edu.java.dto.github.GithubLink;
 import edu.java.dto.github.PullRequestDto;
 import edu.java.dto.github.RepositoryDto;
 import edu.java.entity.ChatEntity;
 import edu.java.entity.LinkEntity;
 import edu.java.entity.RepositoryEntity;
 import edu.java.repository.ChatLinkRepository;
+import edu.java.repository.LinkRepository;
 import edu.java.repository.github.GitHubRepository;
+import edu.java.utils.LinkUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GitHubUpdater implements Updater {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final GitHubClient gitHubClient;
     private final GitHubRepository gitHubRepository;
     private final ChatLinkRepository chatLinkRepository;
+    private final LinkRepository linkRepository;
     private final BotClient botClient;
 
     public GitHubUpdater(
         GitHubClient gitHubClient, GitHubRepository gitHubRepository,
-        ChatLinkRepository chatLinkRepository,
+        ChatLinkRepository chatLinkRepository, LinkRepository linkRepository,
         BotClient botClient
     ) {
         this.gitHubClient = gitHubClient;
         this.gitHubRepository = gitHubRepository;
         this.chatLinkRepository = chatLinkRepository;
+        this.linkRepository = linkRepository;
         this.botClient = botClient;
     }
 
     public void update(LinkEntity linkEntity) {
-        Pattern pattern = Pattern.compile("https:\\/\\/github\\.com\\/(.*?)\\/(.*)");
-        Matcher matcher = pattern.matcher(linkEntity.getName());
-        String user = null;
-        String repo = null;
-        while (matcher.find()) {
-            user = matcher.group(1);
-            repo = matcher.group(2);
+        GithubLink githubLink = LinkUtils.parseGithubLink(linkEntity.getName());
+        String user = githubLink.user();
+        String repo = githubLink.repo();
 
-        }
         RepositoryDto repositoryDto = gitHubClient.fetchRepository(repo, user);
+
         List<BranchDto> branchDtos = gitHubClient.fetchBranchList(repo, user);
         List<PullRequestDto> pullRequestDtos = gitHubClient.fetchPullRequestList(repo, user);
-        RepositoryEntity repoFromDb = gitHubRepository.getRepo(repositoryDto.getId());
+        Optional<RepositoryEntity> optionalRepositoryEntity = gitHubRepository.getRepo(repositoryDto.getId());
+        RepositoryEntity repoFromDb;
+        if (optionalRepositoryEntity.isEmpty()) {
+            repoFromDb = new RepositoryEntity(repositoryDto.getId(), -1, -1);
+            gitHubRepository.add(repoFromDb);
+        } else {
+            repoFromDb = optionalRepositoryEntity.get();
+        }
         List<LinkUpdate> linkUpdates = new ArrayList<>();
         if (repoFromDb.getBranchCount() != branchDtos.size()) {
-            linkUpdates.add(new LinkUpdate("change branch"));
+            linkUpdates.add(new LinkUpdate("Branch count changed"));
         }
         if (repoFromDb.getPullCount() != pullRequestDtos.size()) {
-            linkUpdates.add(new LinkUpdate("change pr"));
+            linkUpdates.add(new LinkUpdate("Pull count changed"));
         }
         if (!linkUpdates.isEmpty()) {
             List<ChatEntity> chats = chatLinkRepository.findChatsByLinkId(linkEntity.getId());
@@ -69,6 +80,17 @@ public class GitHubUpdater implements Updater {
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+            //change last_updated_at
+            linkRepository.update(new LinkEntity(linkEntity.getId(), linkEntity.getName(), linkEntity.getCreatedAt(),
+                OffsetDateTime.now()
+            ));
+            //update repo in db
+            gitHubRepository.update(new RepositoryEntity(
+                repoFromDb.getId(),
+                branchDtos.size(),
+                pullRequestDtos.size()
+            ));
+            //send to all chats update
             for (ChatEntity chat : chats) {
                 Update update = new Update(new Chat(chat.getId()), link, linkUpdates);
                 botClient.sendUpdate(update);
