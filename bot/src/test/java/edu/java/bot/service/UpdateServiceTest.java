@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UpdateServiceTest {
     UpdateService updateService;
@@ -36,7 +35,7 @@ class UpdateServiceTest {
         Mockito.when(sendResponse.isOk()).thenReturn(true);
         //when
         //then
-        updateService.sendUpdates(updateRequest);
+        updateService.sendUpdate(updateRequest);
     }
     @Test
     void sendUpdatesThrows() throws URISyntaxException {
@@ -50,6 +49,6 @@ class UpdateServiceTest {
         Mockito.when(sendResponse.description()).thenReturn("123");
         //when
         //then
-        Assertions.assertThrows(SendMessageException.class,()->updateService.sendUpdates(updateRequest));
+        Assertions.assertThrows(SendMessageException.class,()->updateService.sendUpdate(updateRequest));
     }
 }

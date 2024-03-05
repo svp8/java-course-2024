@@ -3,7 +3,6 @@ package edu.java.client;
 import edu.java.dto.github.BranchDto;
 import edu.java.dto.github.PullRequestDto;
 import edu.java.dto.github.RepositoryDto;
-import java.net.URI;
 import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -11,19 +10,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class GithubClientImpl implements GitHubClient {
     public static final String BASE_URL = "https://api.github.com";
     private final WebClient webClient;
-   private final String baseUrl;
+    private final String baseUrl;
+
     public GithubClientImpl(String baseUrl, WebClient.Builder builder) {
-        if (baseUrl == null || baseUrl.isBlank()) {
-            this.webClient = builder.baseUrl(BASE_URL).build();
-        } else {
-            this.webClient = WebClient.create(baseUrl);
-        }
-        this.baseUrl=baseUrl;
+        this.webClient = builder.baseUrl(ClientUtils.getBaseUrl(baseUrl, BASE_URL)).build();
+        this.baseUrl = baseUrl;
     }
 
     public GithubClientImpl(WebClient.Builder builder) {
         this.webClient = builder.baseUrl(BASE_URL).build();
-        this.baseUrl=BASE_URL;
+        this.baseUrl = BASE_URL;
     }
 
     @Override

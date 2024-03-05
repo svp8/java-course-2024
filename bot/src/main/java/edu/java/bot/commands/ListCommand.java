@@ -30,7 +30,11 @@ public class ListCommand extends Command {
                 if (links == null || links.isEmpty()) {
                     linksString = NO_LINKS;
                 } else {
-                    linksString = links.toString();
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (int i = 0; i < links.size(); i++) {
+                        stringBuilder.append(i + 1).append(". ").append(links.get(i).getUri().toString()).append("\n");
+                    }
+                    linksString = stringBuilder.toString();
                 }
                 super.getBot().sendMessage(chatId, linksString);
             } catch (WebClientResponseException e) {
