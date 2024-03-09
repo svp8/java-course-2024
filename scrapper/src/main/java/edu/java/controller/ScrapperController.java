@@ -7,6 +7,7 @@ import edu.java.exception.DuplicateLinkException;
 import edu.java.exception.InvalidChatIdException;
 import edu.java.exception.NoSuchLinkException;
 import edu.java.exception.URIException;
+import edu.java.service.ChatService;
 import edu.java.service.LinkService;
 import edu.java.service.LinkServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,9 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ScrapperController implements ScrapperControllerInterface {
     private final LinkService linkService;
+    private final ChatService chatService;
 
-    public ScrapperController(LinkService linkService) {
+    public ScrapperController(LinkService linkService, ChatService chatService) {
         this.linkService = linkService;
+        this.chatService = chatService;
     }
 
     @Override
@@ -116,7 +119,7 @@ public class ScrapperController implements ScrapperControllerInterface {
         )
     })
     public ResponseEntity<Void> start(@PathVariable("id") long chatId) {
-        linkService.registerChatId(chatId);
+        chatService.registerChat(chatId);
         return ResponseEntity.ok().build();
     }
 }
