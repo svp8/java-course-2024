@@ -25,6 +25,11 @@ public class BotUpdateListener implements UpdatesListener {
         bot.setUpdatesListener(this);
     }
 
+    /**
+     * processes commands and text if in dialog
+     * @param list list with updates
+     * @return result of update
+     */
     @Override
     public int process(List<Update> list) {
 

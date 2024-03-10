@@ -13,11 +13,7 @@ public class ScrapperClient {
     private final WebClient webClient;
 
     public ScrapperClient(String baseUrl, WebClient.Builder builder) {
-        if (baseUrl == null || baseUrl.isBlank()) {
-            this.webClient = builder.baseUrl(BASE_URL).build();
-        } else {
-            this.webClient = WebClient.create(baseUrl);
-        }
+        this.webClient = builder.baseUrl(ClientUtils.getBaseUrl(baseUrl, BASE_URL)).build();
     }
 
     public ScrapperClient(WebClient.Builder builder) {

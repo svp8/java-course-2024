@@ -12,11 +12,11 @@ import lombok.ToString;
 @EqualsAndHashCode
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AnswerDto {
-    @Getter private int answerId;
+    @Getter private final int answerId;
     @JsonProperty("is_accepted")
-    private boolean isAccepted;
-    @Getter private int score;
-    @Getter private OffsetDateTime lastActivityDate;
+    private final boolean isAccepted;
+    @Getter private final int score;
+    @Getter private final OffsetDateTime lastActivityDate;
 
     public AnswerDto(int answerId, boolean isAccepted, int score, OffsetDateTime lastActivityDate) {
         this.answerId = answerId;

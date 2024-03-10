@@ -25,12 +25,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 class GithubClientImplTest {
 
     public static WireMockServer wireMockServer = new WireMockServer();
-    private GithubClientImpl githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder());
+    private static GithubClientImpl githubClient;
 
     @BeforeAll
     static void init() {
         wireMockServer.start();
-
+        githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder());
     }
 
     @AfterAll

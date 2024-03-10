@@ -12,11 +12,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
     private final WebClient webClient;
 
     public StackOverflowClientImpl(String baseUrl, WebClient.Builder builder) {
-        if (baseUrl == null || baseUrl.isBlank()) {
-            this.webClient = builder.baseUrl(BASE_URL).build();
-        } else {
-            this.webClient = WebClient.create(baseUrl);
-        }
+        this.webClient = builder.baseUrl(ClientUtils.getBaseUrl(baseUrl, BASE_URL)).build();
     }
 
     public StackOverflowClientImpl(WebClient.Builder builder) {
