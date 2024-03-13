@@ -8,10 +8,10 @@ import edu.java.exception.URIException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class LinkServiceImpl implements LinkService {
     }
 
     public LinkServiceImpl() {
-        this.inMemoryDb = new HashMap<>();
+        this.inMemoryDb = new ConcurrentHashMap<>();
     }
 
     public Optional<Link> getByNameAndChatId(String name, long chatId) {

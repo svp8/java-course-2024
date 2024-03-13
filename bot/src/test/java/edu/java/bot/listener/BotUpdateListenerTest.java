@@ -6,18 +6,13 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import edu.java.bot.commands.CommandList;
-import edu.java.bot.commands.ListCommand;
-import edu.java.bot.commands.NoCommand;
 import edu.java.bot.commands.StartCommand;
 import edu.java.bot.model.Bot;
-import edu.java.bot.service.LinkService;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 class BotUpdateListenerTest {
@@ -41,24 +36,25 @@ class BotUpdateListenerTest {
     @Test
     @DisplayName("Should be not in dialog and execute command")
     void process() {
-        CommandList commandList=Mockito.mock(CommandList.class);
-        StartCommand startCommand=Mockito.mock(StartCommand.class);
+        CommandList commandList = Mockito.mock(CommandList.class);
+        StartCommand startCommand = Mockito.mock(StartCommand.class);
         Mockito.when(commandList.get("/start")).thenReturn(startCommand);
-        BotUpdateListener botUpdateListener = new BotUpdateListener(commandList,bot);
+        BotUpdateListener botUpdateListener = new BotUpdateListener(commandList, bot);
         //when
         int result = botUpdateListener.process(List.of(startUpdate));
         //then
         Assertions.assertEquals(result, UpdatesListener.CONFIRMED_UPDATES_ALL);
-        Mockito.verify(startCommand).execute(startUpdate,false);
+        Mockito.verify(startCommand).execute(startUpdate, false);
     }
+
     @Test
     @DisplayName("Should be in dialog and execute command")
     void checkDialog() {
-        CommandList commandList=Mockito.mock(CommandList.class);
-        StartCommand startCommand=Mockito.mock(StartCommand.class);
+        CommandList commandList = Mockito.mock(CommandList.class);
+        StartCommand startCommand = Mockito.mock(StartCommand.class);
         Mockito.when(commandList.get("/start")).thenReturn(startCommand);
 
-        BotUpdateListener botUpdateListener = new BotUpdateListener(commandList,bot);
+        BotUpdateListener botUpdateListener = new BotUpdateListener(commandList, bot);
 
         Update textUpdate = Mockito.mock(Update.class);
         Message message = Mockito.mock(Message.class);
@@ -72,6 +68,6 @@ class BotUpdateListenerTest {
         result = botUpdateListener.process(List.of(textUpdate));
         //then
         Assertions.assertEquals(result, UpdatesListener.CONFIRMED_UPDATES_ALL);
-        Mockito.verify(startCommand).execute(textUpdate,true);
+        Mockito.verify(startCommand).execute(textUpdate, true);
     }
 }
