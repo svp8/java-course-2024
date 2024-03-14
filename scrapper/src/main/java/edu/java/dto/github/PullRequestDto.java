@@ -11,12 +11,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @NoArgsConstructor
 public class PullRequestDto {
-    public int id;
-    public int number;
-    public String url;
-    public String state;
-    public String title;
-    public String body;
-    public OffsetDateTime createdAt;
-    public OffsetDateTime updatedAt;
+    private int id;
+    private String title;
 }

@@ -2,6 +2,7 @@ package edu.java.repository.jdbc;
 
 import edu.java.entity.LinkEntity;
 import edu.java.mapper.LinkMapper;
+import edu.java.repository.ChatLinkRepository;
 import edu.java.repository.LinkRepository;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -15,10 +16,12 @@ import org.springframework.stereotype.Repository;
 public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate jdbcTemplate;
     private final LinkMapper linkMapper;
+    private final ChatLinkRepository chatLinkRepository;
 
-    public JdbcLinkRepository(DataSource dataSource, LinkMapper linkMapper) {
+    public JdbcLinkRepository(DataSource dataSource, LinkMapper linkMapper, ChatLinkRepository chatLinkRepository) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.linkMapper = linkMapper;
+        this.chatLinkRepository = chatLinkRepository;
     }
 
     @Override
@@ -59,16 +62,8 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public List<LinkEntity> findAllByChatId(long chatId) {
-        try {
-            List<LinkEntity> links = jdbcTemplate.query(
-                "select * from link INNER JOIN chat_link cl ON link.id = cl.link_id where cl.chat_id = ? ",
-                linkMapper,
-                chatId
-            );
-            return links;
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
+        List<LinkEntity> links = chatLinkRepository.findLinksByChatId(chatId);
+        return links;
     }
 
     @Override

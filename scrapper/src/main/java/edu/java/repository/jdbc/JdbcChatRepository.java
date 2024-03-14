@@ -21,11 +21,12 @@ public class JdbcChatRepository implements ChatRepository {
     }
 
     @Override
-    public void createChat(long id) {
+    public ChatEntity createChat(long id) {
         jdbcTemplate.update(
             "INSERT INTO chat(id,created_at) values(?,?)",
             id, OffsetDateTime.now()
         );
+        return getChatById(id).get();
     }
 
     @Override
