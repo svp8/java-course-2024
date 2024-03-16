@@ -3,26 +3,22 @@ package edu.java.service.jdbc;
 import edu.java.dto.Link;
 import edu.java.entity.ChatEntity;
 import edu.java.entity.LinkEntity;
-import edu.java.exception.DuplicateLinkException;
-import edu.java.exception.InvalidChatIdException;
-import edu.java.exception.InvalidLinkFormatException;
-import edu.java.exception.LinkNotTrackedException;
-import edu.java.exception.NoSuchLinkException;
-import edu.java.exception.URIException;
+import edu.java.exception.*;
 import edu.java.repository.jdbc.JdbcChatLinkRepository;
 import edu.java.repository.jdbc.JdbcChatRepository;
 import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.service.LinkService;
 import edu.java.utils.LinkUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class JdbcLinkService implements LinkService {
