@@ -10,7 +10,9 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class JdbcPullRepository implements PullRepository {
     private final JdbcTemplate jdbcTemplate;
 
@@ -28,7 +30,7 @@ public class JdbcPullRepository implements PullRepository {
     }
 
     @Override
-    public Optional<PullEntity> getById(int id) {
+    public Optional<PullEntity> getById(long id) {
         try {
             PullEntity pull = jdbcTemplate.queryForObject(
                 "select * from pull_request where id = ? ",
@@ -45,7 +47,7 @@ public class JdbcPullRepository implements PullRepository {
     public List<PullEntity> getAllByLinkId(int linkId) {
         try {
             List<PullEntity> pullEntities = jdbcTemplate.query(
-                "select * from pull_request where chat_id = ? ",
+                "select * from pull_request where link_id = ? ",
                 JdbcPullRepository::mapper,
                 linkId
             );
@@ -63,7 +65,7 @@ public class JdbcPullRepository implements PullRepository {
     @Override
     public PullEntity add(PullEntity entity) {
         jdbcTemplate.update(
-            "INSERT INTO pull_request(id,title,link_id) values(?,?)",
+            "INSERT INTO pull_request(id,title,link_id) values(?,?,?)",
             entity.getId(),entity.getTitle(),entity.getLinkId()
         );
         return getById(entity.getId()).get();

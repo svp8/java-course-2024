@@ -9,6 +9,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import wiremock.com.fasterxml.jackson.databind.JsonNode;
 import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,9 +41,11 @@ class StackOverflowClientImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void getAnswersByQuestionId() {
         AnswerDto[] expectedDto =
-            new AnswerDto[] {new AnswerDto(1, true, 12, offsetDateTime), new AnswerDto(2, true, 12, offsetDateTime)};
+            new AnswerDto[] {new AnswerDto(1, true, offsetDateTime,12, offsetDateTime), new AnswerDto(2, true, offsetDateTime,12, offsetDateTime)};
         GeneralResponse<AnswerDto> expected = new GeneralResponse<>();
         expected.setItems(expectedDto);
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -62,6 +66,8 @@ class StackOverflowClientImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void getAllComments() {
         CommentDto[] expectedDto = new CommentDto[] {new CommentDto(1, 1, "213", "21", true, offsetDateTime),
             new CommentDto(2, 1, "213", "21", true, offsetDateTime)};

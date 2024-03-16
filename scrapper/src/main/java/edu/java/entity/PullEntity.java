@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class PullEntity {
-    private int id;
+    private long id;
     private String title;
     private int linkId;
 }

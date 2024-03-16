@@ -9,7 +9,9 @@ import javax.sql.DataSource;
 import edu.java.repository.github.BranchRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class JdbcBranchRepository implements BranchRepository {
     private final JdbcTemplate jdbcTemplate;
 
@@ -29,7 +31,7 @@ public class JdbcBranchRepository implements BranchRepository {
     public Optional<BranchEntity> getByNameAndLinkId(String name,int id) {
         try {
             BranchEntity branch = jdbcTemplate.queryForObject(
-                "select * from branch where id = ? AND name = ?",
+                "select * from branch where link_id = ? AND name = ?",
                 JdbcBranchRepository::mapper,
                 id,name
             );
@@ -43,7 +45,7 @@ public class JdbcBranchRepository implements BranchRepository {
     public List<BranchEntity> getAllByLinkId(int linkId) {
         try {
             List<BranchEntity> branchEntities = jdbcTemplate.query(
-                "select * from branch where chat_id = ? ",
+                "select * from branch where link_id = ? ",
                 JdbcBranchRepository::mapper,
                 linkId
             );
@@ -71,7 +73,7 @@ public class JdbcBranchRepository implements BranchRepository {
     @Override
     public void delete(BranchEntity entity) {
         jdbcTemplate.update(
-            "DELETE FROM chat WHERE id = ? and name=?",
+            "DELETE FROM branch WHERE link_id = ? and name=?",
             entity.getLinkId(),entity.getName()
         );
     }

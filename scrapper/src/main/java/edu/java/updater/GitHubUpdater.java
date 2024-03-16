@@ -9,16 +9,13 @@ import edu.java.dto.Update;
 import edu.java.dto.github.BranchDto;
 import edu.java.dto.github.GithubLink;
 import edu.java.dto.github.PullRequestDto;
-import edu.java.dto.github.RepositoryDto;
 import edu.java.entity.BranchEntity;
 import edu.java.entity.ChatEntity;
 import edu.java.entity.LinkEntity;
 import edu.java.entity.PullEntity;
-import edu.java.entity.RepositoryEntity;
 import edu.java.repository.ChatLinkRepository;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.github.BranchRepository;
-import edu.java.repository.github.GitHubRepository;
 import edu.java.repository.github.PullRepository;
 import edu.java.utils.LinkUtils;
 import java.net.URI;
@@ -27,10 +24,10 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class GitHubUpdater implements Updater {
@@ -57,6 +54,7 @@ public class GitHubUpdater implements Updater {
         this.botClient = botClient;
     }
 
+    @Transactional
     public void update(LinkEntity linkEntity) {
         GithubLink githubLink = LinkUtils.parseGithubLink(linkEntity.getName());
         String user = githubLink.user();
@@ -65,46 +63,55 @@ public class GitHubUpdater implements Updater {
         List<BranchDto> branchDtos = gitHubClient.fetchBranchList(repo, user);
         List<PullRequestDto> pullRequestDtos = gitHubClient.fetchPullRequestList(repo, user);
 
-        List<PullEntity> pullEntityList=pullRepository.getAllByLinkId(linkEntity.getId());
-        List<BranchEntity> branchEntityList=branchRepository.getAllByLinkId(linkEntity.getId());
-        RepositoryEntity repoFromDb;
-        if (pullEntityList!=null) {
+        List<PullEntity> pullEntityList = pullRepository.getAllByLinkId(linkEntity.getId());
+        List<BranchEntity> branchEntityList = branchRepository.getAllByLinkId(linkEntity.getId());
+
+        if (pullEntityList != null) {
             List<PullEntity> finalPullEntityList = pullEntityList;
-            pullRequestDtos=pullRequestDtos.stream().filter(x-> finalPullEntityList.stream().noneMatch(entity-> x.getId() == entity.getId())).toList();
             List<PullRequestDto> finalPullRequestDtos = pullRequestDtos;
-            pullEntityList=pullEntityList.stream().filter(x-> finalPullRequestDtos.stream().noneMatch(dto-> dto.getId() == x.getId())).toList();
-            if(pullEntityList.size()>0){
-                for (PullEntity pullEntity : pullEntityList) {
-                    pullRepository.delete(pullEntity);
-                }
+            //оставляем только те обновления, которых нет в бд
+            pullRequestDtos = pullRequestDtos.stream()
+                .filter(x -> finalPullEntityList.stream().noneMatch(entity -> x.getId() == entity.getId())).toList();
+            //ищем записи, которых нет в ответе от апи (значит эти записи были удалены)
+            pullEntityList = pullEntityList.stream()
+                .filter(x -> finalPullRequestDtos.stream().noneMatch(dto -> dto.getId() == x.getId())).toList();
+//удаляем эти записи из бд
+            for (PullEntity pullEntity : pullEntityList) {
+                pullRepository.delete(pullEntity);
             }
+
         }
-        if (branchEntityList!=null) {
+        if (branchEntityList != null) {
             List<BranchEntity> finalBranchEntityList = branchEntityList;
-            branchDtos=branchDtos.stream().filter(x-> finalBranchEntityList.stream().noneMatch(entity-> Objects.equals(
-                x.getName(),
-                entity.getName()
-            ))).toList();
             List<BranchDto> finalbranchDtos = branchDtos;
-            branchEntityList=branchEntityList.stream().filter(x-> finalbranchDtos.stream().noneMatch(dto-> dto.getName()
-                .equals(x.getName()))).toList();
-            if(branchEntityList.size()>0){
+            //оставляем только те обновления, которых нет в бд
+            branchDtos =
+                branchDtos.stream().filter(x -> finalBranchEntityList.stream().noneMatch(entity -> Objects.equals(
+                    x.getName(),
+                    entity.getName()
+                ))).toList();
+            //ищем записи, которых нет в ответе от апи (значит эти записи были удалены)
+            branchEntityList =
+                branchEntityList.stream().filter(x -> finalbranchDtos.stream().noneMatch(dto -> dto.getName()
+                    .equals(x.getName()))).toList();
+            //удаляем эти записи из бд
+            if (!branchEntityList.isEmpty()) {
                 for (BranchEntity branchEntity : branchEntityList) {
                     branchRepository.delete(branchEntity);
                 }
             }
         }
         List<LinkUpdate> linkUpdates = new ArrayList<>();
-        if (pullRequestDtos.size()>0) {
-            pullRequestDtos.forEach(x->{
-                pullRepository.add(new PullEntity(x.getId(),x.getTitle(),linkEntity.getId()));
-                linkUpdates.add(new LinkUpdate(x.getTitle()+" created"));
+        if (!pullRequestDtos.isEmpty()) {
+            pullRequestDtos.forEach(x -> {
+                pullRepository.add(new PullEntity(x.getId(), x.getTitle(), linkEntity.getId()));
+                linkUpdates.add(new LinkUpdate("New pr was created with name " + x.getTitle()));
             });
         }
-        if (branchDtos.size()>0) {
-            branchDtos.forEach(x->{
-                branchRepository.add(new BranchEntity(x.getName(),linkEntity.getId()));
-                linkUpdates.add(new LinkUpdate(x.getName()+" created"));
+        if (!branchDtos.isEmpty()) {
+            branchDtos.forEach(x -> {
+                branchRepository.add(new BranchEntity(x.getName(), linkEntity.getId()));
+                linkUpdates.add(new LinkUpdate("New branch was created with name " + x.getName()));
             });
         }
         if (!linkUpdates.isEmpty()) {

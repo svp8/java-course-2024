@@ -1,26 +1,23 @@
 package edu.java.service.jdbc;
 
 import edu.java.dto.Link;
+import edu.java.entity.ChatEntity;
 import edu.java.entity.LinkEntity;
-import edu.java.exception.DuplicateLinkException;
-import edu.java.exception.InvalidChatIdException;
-import edu.java.exception.InvalidLinkFormatException;
-import edu.java.exception.LinkNotTrackedException;
-import edu.java.exception.NoSuchLinkException;
-import edu.java.exception.URIException;
+import edu.java.exception.*;
 import edu.java.repository.jdbc.JdbcChatLinkRepository;
 import edu.java.repository.jdbc.JdbcChatRepository;
 import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.service.LinkService;
 import edu.java.utils.LinkUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class JdbcLinkService implements LinkService {
@@ -52,25 +49,27 @@ public class JdbcLinkService implements LinkService {
         }
 
         Optional<LinkEntity> link = linkRepository.getByLinkName(name);
-        if (link.isPresent()) {
-            throw new DuplicateLinkException(HttpStatus.BAD_REQUEST.value(), "Link is already tracked");
+        LinkEntity linkEntity;
+        if (link.isEmpty()) {
+            linkEntity = linkRepository.add(name);
         } else {
-            List<LinkEntity> linkList = linkRepository.findAllByChatId(chatId);
-            if (linkList.stream().anyMatch(l -> l.getName().equals(name))) {
-                throw new DuplicateLinkException(
-                    HttpStatus.BAD_REQUEST.value(),
-                    "Link is already tracked by this chat"
-                );
-            }
-            try {
-                Link createdLink = new Link(new URI(name.trim()));
-                LinkEntity linkEntity = linkRepository.add(name);
-                jdbcChatLinkRepository.create(chatId, linkEntity.getId());
-                return createdLink;
-            } catch (URISyntaxException e) {
-                throw new URIException(HttpStatus.BAD_REQUEST.value(), "Bad Uri");
-            }
+            linkEntity = link.get();
         }
+        List<LinkEntity> linkList = linkRepository.findAllByChatId(chatId);
+        if (linkList.stream().anyMatch(l -> l.getName().equals(name))) {
+            throw new DuplicateLinkException(
+                HttpStatus.BAD_REQUEST.value(),
+                "Link is already tracked by this chat"
+            );
+        }
+        try {
+            Link createdLink = new Link(new URI(name.trim()));
+            jdbcChatLinkRepository.create(chatId, linkEntity.getId());
+            return createdLink;
+        } catch (URISyntaxException e) {
+            throw new URIException(HttpStatus.BAD_REQUEST.value(), "Bad Uri");
+        }
+
     }
 
     @Override
@@ -87,6 +86,11 @@ public class JdbcLinkService implements LinkService {
                 throw new LinkNotTrackedException(HttpStatus.NOT_FOUND.value(), "Link is not tracked by this chat");
             }
             jdbcChatLinkRepository.remove(chatId, link.get().getId());
+            List<ChatEntity> chats = jdbcChatLinkRepository.findChatsByLinkId(link.get().getId());
+            if (chats == null || chats.isEmpty()) {
+                //delete link and all connected
+                linkRepository.remove(link.get().getId());
+            }
         }
     }
 

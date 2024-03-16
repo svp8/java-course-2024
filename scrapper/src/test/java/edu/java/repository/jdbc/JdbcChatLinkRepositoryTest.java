@@ -34,10 +34,12 @@ class JdbcChatLinkRepositoryTest extends IntegrationTest {
     void createAndFindLinksByChatId() {
         chatRepository.createChat(1);
         List<LinkEntity> expected = new ArrayList<>();
-        expected.add(linkRepository.add("123"));
-        expected.add(linkRepository.add("211"));
-        chatLinkRepository.create(1, 1);
-        chatLinkRepository.create(1, 2);
+        LinkEntity linkEntity = linkRepository.add("123");
+        expected.add(linkEntity);
+        LinkEntity linkEntity1 = linkRepository.add("211");
+        expected.add(linkEntity1);
+        chatLinkRepository.create(1, linkEntity.getId());
+        chatLinkRepository.create(1, linkEntity1.getId());
         //when
         List<LinkEntity> actual = chatLinkRepository.findLinksByChatId(1);
         //then
@@ -45,17 +47,17 @@ class JdbcChatLinkRepositoryTest extends IntegrationTest {
     }
 
     @Test
-    @Transactional
     @Rollback
+    @Transactional
     void findChatsByLinkId() {
         List<ChatEntity> expected = new ArrayList<>();
         expected.add(chatRepository.createChat(1));
         expected.add(chatRepository.createChat(2));
-        linkRepository.add("123");
-        chatLinkRepository.create(1, 1);
-        chatLinkRepository.create(2, 1);
+        LinkEntity linkEntity = linkRepository.add("123");
+        chatLinkRepository.create(1, linkEntity.getId());
+        chatLinkRepository.create(2, linkEntity.getId());
         //when
-        List<ChatEntity> actual = chatLinkRepository.findChatsByLinkId(1);
+        List<ChatEntity> actual = chatLinkRepository.findChatsByLinkId(linkEntity.getId());
         //then
         Assertions.assertEquals(expected,actual);
 
@@ -67,12 +69,14 @@ class JdbcChatLinkRepositoryTest extends IntegrationTest {
     void remove() {
         chatRepository.createChat(1);
         List<LinkEntity> expected = new ArrayList<>();
-        expected.add(linkRepository.add("123"));
-        expected.add(linkRepository.add("211"));
-        chatLinkRepository.create(1, 1);
-        chatLinkRepository.create(1, 2);
+        LinkEntity linkEntity = linkRepository.add("123");
+        expected.add(linkEntity);
+        LinkEntity linkEntity1 = linkRepository.add("211");
+        expected.add(linkEntity1);
+        chatLinkRepository.create(1, linkEntity.getId());
+        chatLinkRepository.create(1, linkEntity1.getId());
         //when
-        chatLinkRepository.remove(1, 1);
+        chatLinkRepository.remove(1, linkEntity.getId());
         //then
         List<LinkEntity> actual = chatLinkRepository.findLinksByChatId(1);
         Assertions.assertEquals(1, actual.size());

@@ -4,6 +4,7 @@ import edu.java.entity.LinkEntity;
 import edu.java.mapper.LinkMapper;
 import edu.java.repository.ChatLinkRepository;
 import edu.java.repository.LinkRepository;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +17,9 @@ import org.springframework.stereotype.Repository;
 public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate jdbcTemplate;
     private final LinkMapper linkMapper;
-    private final ChatLinkRepository chatLinkRepository;
+    private final JdbcChatLinkRepository chatLinkRepository;
 
-    public JdbcLinkRepository(DataSource dataSource, LinkMapper linkMapper, ChatLinkRepository chatLinkRepository) {
+    public JdbcLinkRepository(DataSource dataSource, LinkMapper linkMapper, JdbcChatLinkRepository chatLinkRepository) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.linkMapper = linkMapper;
         this.chatLinkRepository = chatLinkRepository;
@@ -67,11 +68,11 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<LinkEntity> findAllLastUpdated() {
+    public List<LinkEntity> findAllLastUpdated(Duration offset) {
         try {
             List<LinkEntity> links = jdbcTemplate.query(
-                "select * from link where EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_updated_at))>20 ",
-                linkMapper
+                "select * from link where EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_updated_at))>? ",
+                linkMapper, offset.toSeconds()
             );
             return links;
         } catch (EmptyResultDataAccessException e) {
