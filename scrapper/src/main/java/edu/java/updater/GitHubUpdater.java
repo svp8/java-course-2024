@@ -13,11 +13,14 @@ import edu.java.entity.BranchEntity;
 import edu.java.entity.ChatEntity;
 import edu.java.entity.LinkEntity;
 import edu.java.entity.PullEntity;
-import edu.java.service.BranchService;
-import edu.java.service.ChatService;
-import edu.java.service.LinkService;
-import edu.java.service.PullService;
+import edu.java.repository.ChatLinkRepository;
+import edu.java.repository.LinkRepository;
+import edu.java.repository.github.BranchRepository;
+import edu.java.repository.github.PullRepository;
 import edu.java.utils.LinkUtils;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,23 +33,25 @@ import org.springframework.transaction.annotation.Transactional;
 public class GitHubUpdater implements Updater {
     private static final Logger LOGGER = LogManager.getLogger();
     private final GitHubClient gitHubClient;
-    private final BranchService branchService;
-    private final PullService pullService;
-    private final ChatService chatService;
+    private final PullRepository pullRepository;
+    private final BranchRepository branchRepository;
+    private final ChatLinkRepository chatLinkRepository;
+    private final LinkRepository linkRepository;
     private final BotClient botClient;
-    private final LinkService linkService;
 
     public GitHubUpdater(
-        GitHubClient gitHubClient, PullService pullService,
-        BranchService branchService, ChatService chatService,
-        BotClient botClient, LinkService linkService
+        GitHubClient gitHubClient,
+        PullRepository pullRepository,
+        BranchRepository branchRepository,
+        ChatLinkRepository chatLinkRepository, LinkRepository linkRepository,
+        BotClient botClient
     ) {
         this.gitHubClient = gitHubClient;
-        this.branchService = branchService;
-        this.pullService = pullService;
-        this.chatService = chatService;
+        this.pullRepository = pullRepository;
+        this.branchRepository = branchRepository;
+        this.chatLinkRepository = chatLinkRepository;
+        this.linkRepository = linkRepository;
         this.botClient = botClient;
-        this.linkService = linkService;
     }
 
     @Transactional
@@ -58,8 +63,8 @@ public class GitHubUpdater implements Updater {
         List<BranchDto> branchDtos = gitHubClient.fetchBranchList(repo, user);
         List<PullRequestDto> pullRequestDtos = gitHubClient.fetchPullRequestList(repo, user);
 
-        List<PullEntity> pullEntityList = pullService.getAllByLinkId(linkEntity.getId());
-        List<BranchEntity> branchEntityList = branchService.getAllByLinkId(linkEntity.getId());
+        List<PullEntity> pullEntityList = pullRepository.getAllByLinkId(linkEntity.getId());
+        List<BranchEntity> branchEntityList = branchRepository.getAllByLinkId(linkEntity.getId());
 
         if (pullEntityList != null) {
             List<PullEntity> finalPullEntityList = pullEntityList;
@@ -72,7 +77,7 @@ public class GitHubUpdater implements Updater {
                 .filter(x -> finalPullRequestDtos.stream().noneMatch(dto -> dto.getId() == x.getId())).toList();
 //удаляем эти записи из бд
             for (PullEntity pullEntity : pullEntityList) {
-                pullService.delete(pullEntity);
+                pullRepository.delete(pullEntity);
             }
 
         }
@@ -92,26 +97,35 @@ public class GitHubUpdater implements Updater {
             //удаляем эти записи из бд
             if (!branchEntityList.isEmpty()) {
                 for (BranchEntity branchEntity : branchEntityList) {
-                    branchService.delete(branchEntity);
+                    branchRepository.delete(branchEntity);
                 }
             }
         }
         List<LinkUpdate> linkUpdates = new ArrayList<>();
         if (!pullRequestDtos.isEmpty()) {
             pullRequestDtos.forEach(x -> {
-                pullService.add(new PullEntity(x.getId(), x.getTitle(), linkEntity.getId()));
+                pullRepository.add(new PullEntity(x.getId(), x.getTitle(), linkEntity.getId()));
                 linkUpdates.add(new LinkUpdate("New pr was created with name " + x.getTitle()));
             });
         }
         if (!branchDtos.isEmpty()) {
             branchDtos.forEach(x -> {
-                branchService.add(new BranchEntity(x.getName(), linkEntity.getId()));
+                branchRepository.add(new BranchEntity(x.getName(), linkEntity.getId()));
                 linkUpdates.add(new LinkUpdate("New branch was created with name " + x.getName()));
             });
         }
         if (!linkUpdates.isEmpty()) {
-            List<ChatEntity> chats = chatService.findChatsByLinkId(linkEntity.getId());
-            Link link = linkService.update(linkEntity);
+            List<ChatEntity> chats = chatLinkRepository.findChatsByLinkId(linkEntity.getId());
+            Link link;
+            try {
+                link = new Link(new URI(linkEntity.getName()));
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+            //change last_updated_at
+            linkRepository.update(new LinkEntity(linkEntity.getId(), linkEntity.getName(), linkEntity.getCreatedAt(),
+                OffsetDateTime.now()
+            ));
             //send to all chats update
             for (ChatEntity chat : chats) {
                 Update update = new Update(new Chat(chat.getId()), link, linkUpdates);

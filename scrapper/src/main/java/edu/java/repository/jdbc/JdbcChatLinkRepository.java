@@ -52,7 +52,7 @@ public class JdbcChatLinkRepository implements ChatLinkRepository {
     }
 
     @Override
-    public void create(long chatId, long linkId) {
+    public void create(long chatId, int linkId) {
         jdbcTemplate.update(
             "INSERT INTO chat_link(chat_id,link_id) values(?,?)",
             chatId, linkId
@@ -60,7 +60,7 @@ public class JdbcChatLinkRepository implements ChatLinkRepository {
     }
 
     @Override
-    public void remove(long chatId, long linkId) {
+    public void remove(long chatId, int linkId) {
         jdbcTemplate.update(
             "DELETE FROM chat_link WHERE chat_id = ? AND link_id = ?",
             chatId, linkId

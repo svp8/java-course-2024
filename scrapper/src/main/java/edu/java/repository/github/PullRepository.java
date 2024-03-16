@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PullRepository {
-    Optional<PullEntity> getById(int id);
+    Optional<PullEntity> getById(long id);
     List<PullEntity> getAllByLinkId(int linkId);
     PullEntity update(PullEntity entity);
 

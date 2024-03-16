@@ -2,6 +2,7 @@ package edu.java.repository.jdbc;
 
 import edu.java.entity.LinkEntity;
 import edu.java.scrapper.IntegrationTest;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -15,16 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 class JdbcLinkRepositoryTest extends IntegrationTest {
-    @Autowired
-    JdbcGitHubRepository jdbcGitHubRepository;
+
     @Autowired
     private JdbcChatLinkRepository chatLinkRepository;
     @Autowired
     private JdbcLinkRepository linkRepository;
     @Autowired
     private JdbcChatRepository chatRepository;
-    OffsetDateTime maxT=OffsetDateTime.of(2555,1,1,1,1,1,1, ZoneOffset.UTC);
-    OffsetDateTime minT=OffsetDateTime.of(1,1,1,1,1,1,1, ZoneOffset.UTC);
+    OffsetDateTime maxT = OffsetDateTime.of(2555, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
+    OffsetDateTime minT = OffsetDateTime.of(1, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
 
     @Test
     @Transactional
@@ -76,15 +76,15 @@ class JdbcLinkRepositoryTest extends IntegrationTest {
             .lastUpdatedAt(maxT)
             .createdAt(OffsetDateTime.MAX)
             .build();
-        List<LinkEntity> expected=new ArrayList<>();
+        List<LinkEntity> expected = new ArrayList<>();
         expected.add(linkRepository.update(min));
         expected.add(linkRepository.update(min2));
         linkRepository.update(max);
 //when
-        List<LinkEntity> actual = linkRepository.findAllLastUpdated();
+        List<LinkEntity> actual = linkRepository.findAllLastUpdated(Duration.ZERO);
 //then
-        Assertions.assertEquals(2,actual.size());
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(2, actual.size());
+        Assertions.assertEquals(expected, actual);
 
     }
 

@@ -12,11 +12,9 @@ import edu.java.entity.LinkEntity;
 import edu.java.repository.ChatLinkRepository;
 import edu.java.repository.ChatRepository;
 import edu.java.repository.LinkRepository;
+import edu.java.repository.stack.AnswerRepository;
+import edu.java.repository.stack.CommentRepository;
 import edu.java.scrapper.IntegrationTest;
-import edu.java.service.AnswerService;
-import edu.java.service.ChatService;
-import edu.java.service.CommentService;
-import edu.java.service.LinkService;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import org.junit.jupiter.api.AfterAll;
@@ -36,6 +34,7 @@ import wiremock.com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static edu.java.client.StackOverflowClientImpl.SITE_STACKOVERFLOW;
 
@@ -44,24 +43,18 @@ class StackUpdaterTest extends IntegrationTest {
 
     private StackOverflowClient stackOverflowClient =
         new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
-
     @AfterAll
     static void end() {
         wireMockServer.stop();
     }
-
     @Autowired
-    private CommentService commentService;
+    private CommentRepository commentRepository;
     @Autowired
-    private AnswerService answerService;
+    private AnswerRepository answerRepository;
     @Autowired
     private ChatLinkRepository chatLinkRepository;
     @Autowired
-    private ChatService chatService;
-    @Autowired
     private LinkRepository linkRepository;
-    @Autowired
-    private LinkService linkService;
     @Autowired
     private ChatRepository chatRepository;
 
@@ -77,8 +70,8 @@ class StackUpdaterTest extends IntegrationTest {
         wireMockServer.start();
 
         AnswerDto[] expectedDto =
-            new AnswerDto[] {new AnswerDto(1, true, offsetDateTime, 12, offsetDateTime),
-                new AnswerDto(2, true, offsetDateTime, 12, offsetDateTime)};
+            new AnswerDto[] {new AnswerDto(1, true, offsetDateTime,12, offsetDateTime),
+                new AnswerDto(2, true, offsetDateTime,12, offsetDateTime)};
         GeneralResponse<AnswerDto> expected = new GeneralResponse<>();
         expected.setItems(expectedDto);
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -113,23 +106,21 @@ class StackUpdaterTest extends IntegrationTest {
     @Rollback
     void update() {
         chatRepository.createChat(1);
-        LinkEntity linkEntity =
-            linkRepository.add("https://stackoverflow.com/questions/57626072/connection-refused-when-using-wiremock");
-        chatLinkRepository.create(1, linkEntity.getId());
-        StackUpdater stackUpdater = new StackUpdater(
-            stackOverflowClient,
-
-            commentService, answerService, chatService,
-            linkService,
-            botClient
-        );
+        LinkEntity linkEntity = linkRepository.add("https://stackoverflow.com/questions/57626072/connection-refused-when-using-wiremock");
+        chatLinkRepository.create(1, 1);
+        StackUpdater stackUpdater = new StackUpdater(stackOverflowClient,
+            commentRepository,
+            answerRepository,
+            chatLinkRepository,
+            linkRepository,
+            botClient);
 
         stackUpdater.update(linkEntity);
 
         wireMockServer.verify(getRequestedFor(urlEqualTo(testUriAnswer)));
         wireMockServer.verify(getRequestedFor(urlEqualTo(testUriComment)));
         wireMockServer.verify(postRequestedFor(urlEqualTo(testUrlClient)));
-        Assertions.assertEquals(2, commentService.getAllByLinkId(linkEntity.getId()).size());
-        Assertions.assertEquals(2, answerService.getAllByLinkId(linkEntity.getId()).size());
+        Assertions.assertEquals(2, commentRepository.getAllByLinkId(linkEntity.getId()).size());
+        Assertions.assertEquals(2, answerRepository.getAllByLinkId(linkEntity.getId()).size());
     }
 }

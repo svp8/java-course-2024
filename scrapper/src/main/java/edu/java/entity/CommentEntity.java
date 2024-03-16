@@ -1,16 +1,17 @@
 package edu.java.entity;
 
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-@Getter
 @Builder
-@AllArgsConstructor
+@Getter
 @EqualsAndHashCode
-public class PullEntity {
+@AllArgsConstructor
+public class CommentEntity {
     private long id;
-    private String title;
+    private OffsetDateTime creationDate;
     private int linkId;
 }
