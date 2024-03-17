@@ -1,12 +1,16 @@
 package edu.java.repository.jooq;
 
 import edu.java.entity.CommentEntity;
+import edu.java.repository.stack.CommentRepository;
 import java.util.List;
 import java.util.Optional;
-import edu.java.repository.stack.CommentRepository;
 import org.jooq.DSLContext;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 import static scrapper.domain.jooq.Tables.COMMENT;
 
+@Repository
+@Primary
 public class JooqCommentRepository implements CommentRepository {
     private final DSLContext dsl;
 
