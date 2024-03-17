@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface AnswerRepository {
     Optional<AnswerEntity> getById(long id);
+
     List<AnswerEntity> getAllByLinkId(int linkId);
 
     AnswerEntity update(AnswerEntity entity);

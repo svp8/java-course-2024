@@ -1,6 +1,5 @@
 package edu.java.repository.jdbc;
 
-import edu.java.entity.BranchEntity;
 import edu.java.entity.PullEntity;
 import edu.java.repository.github.PullRepository;
 import java.sql.ResultSet;
@@ -66,7 +65,7 @@ public class JdbcPullRepository implements PullRepository {
     public PullEntity add(PullEntity entity) {
         jdbcTemplate.update(
             "INSERT INTO pull_request(id,title,link_id) values(?,?,?)",
-            entity.getId(),entity.getTitle(),entity.getLinkId()
+            entity.getId(), entity.getTitle(), entity.getLinkId()
         );
         return getById(entity.getId()).get();
     }

@@ -1,12 +1,12 @@
 package edu.java.repository.jdbc;
 
 import edu.java.entity.BranchEntity;
+import edu.java.repository.github.BranchRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import edu.java.repository.github.BranchRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -28,12 +28,12 @@ public class JdbcBranchRepository implements BranchRepository {
     }
 
     @Override
-    public Optional<BranchEntity> getByNameAndLinkId(String name,int id) {
+    public Optional<BranchEntity> getByNameAndLinkId(String name, int id) {
         try {
             BranchEntity branch = jdbcTemplate.queryForObject(
                 "select * from branch where link_id = ? AND name = ?",
                 JdbcBranchRepository::mapper,
-                id,name
+                id, name
             );
             return Optional.of(branch);
         } catch (EmptyResultDataAccessException e) {
@@ -65,7 +65,7 @@ public class JdbcBranchRepository implements BranchRepository {
     public BranchEntity add(BranchEntity entity) {
         jdbcTemplate.update(
             "INSERT INTO branch(name,link_id) values(?,?)",
-            entity.getName(),entity.getLinkId()
+            entity.getName(), entity.getLinkId()
         );
         return getByNameAndLinkId(entity.getName(), entity.getLinkId()).get();
     }
@@ -74,7 +74,7 @@ public class JdbcBranchRepository implements BranchRepository {
     public void delete(BranchEntity entity) {
         jdbcTemplate.update(
             "DELETE FROM branch WHERE link_id = ? and name=?",
-            entity.getLinkId(),entity.getName()
+            entity.getLinkId(), entity.getName()
         );
     }
 }

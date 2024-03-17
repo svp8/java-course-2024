@@ -1,9 +1,10 @@
 package edu.java.repository.jdbc;
 
-import edu.java.entity.BranchEntity;
 import edu.java.entity.LinkEntity;
 import edu.java.entity.PullEntity;
 import edu.java.scrapper.IntegrationTest;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class JdbcPullRepositoryTest extends IntegrationTest {
     @Autowired
     JdbcLinkRepository jdbcLinkRepository;
     @Autowired
     JdbcPullRepository jdbcPullRepository;
+
     @Test
     @Transactional
     @Rollback
@@ -30,7 +29,7 @@ class JdbcPullRepositoryTest extends IntegrationTest {
         //when
         Optional<PullEntity> actual = jdbcPullRepository.getById(1);
         //then
-        Assertions.assertEquals(expected,actual.get());
+        Assertions.assertEquals(expected, actual.get());
     }
 
     @Test
@@ -38,12 +37,12 @@ class JdbcPullRepositoryTest extends IntegrationTest {
     @Rollback
     void getAllByLinkId() {
         LinkEntity linkEntity = jdbcLinkRepository.add("333");
-        jdbcPullRepository.add(new PullEntity(1,"123", linkEntity.getId()));
-        jdbcPullRepository.add(new PullEntity(2,"124", linkEntity.getId()));
+        jdbcPullRepository.add(new PullEntity(1, "123", linkEntity.getId()));
+        jdbcPullRepository.add(new PullEntity(2, "124", linkEntity.getId()));
         //when
         List<PullEntity> actual = jdbcPullRepository.getAllByLinkId(linkEntity.getId());
         //then
-        Assertions.assertEquals(2,actual.size());
+        Assertions.assertEquals(2, actual.size());
 
     }
 
@@ -58,8 +57,8 @@ class JdbcPullRepositoryTest extends IntegrationTest {
     @Rollback
     void delete() {
         LinkEntity linkEntity = jdbcLinkRepository.add("333");
-        PullEntity branchEntity1 = jdbcPullRepository.add(new PullEntity(1,"123", linkEntity.getId()));
-        PullEntity branchEntity2 = jdbcPullRepository.add(new PullEntity(2,"124", linkEntity.getId()));
+        PullEntity branchEntity1 = jdbcPullRepository.add(new PullEntity(1, "123", linkEntity.getId()));
+        PullEntity branchEntity2 = jdbcPullRepository.add(new PullEntity(2, "124", linkEntity.getId()));
         //when
         jdbcPullRepository.delete(branchEntity1);
         //then

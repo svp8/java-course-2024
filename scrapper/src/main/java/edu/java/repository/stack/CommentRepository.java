@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface CommentRepository {
     Optional<CommentEntity> getById(long id);
+
     List<CommentEntity> getAllByLinkId(int linkId);
 
     CommentEntity update(CommentEntity entity);

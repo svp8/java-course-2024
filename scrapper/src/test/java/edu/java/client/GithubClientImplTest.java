@@ -20,19 +20,16 @@ import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
 import wiremock.com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 class GithubClientImplTest {
 
-    public static WireMockServer wireMockServer ;
+    public static WireMockServer wireMockServer;
     private GithubClientImpl githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder());
 
     @BeforeAll
     static void init() {
-        wireMockServer= new WireMockServer( 8908);
+        wireMockServer = new WireMockServer(8908);
         wireMockServer.start();
 
     }
@@ -89,12 +86,11 @@ class GithubClientImplTest {
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         JsonNode node = mapper.valueToTree(expected);
         String testUrl = "/repos/svp8/java-course-2024/pulls";
-       wireMockServer. stubFor(WireMock.get(urlEqualTo(testUrl))
+        wireMockServer.stubFor(WireMock.get(urlEqualTo(testUrl))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 .withJsonBody(node)));
-
 
         List<PullRequestDto> actual = githubClient.fetchPullRequestList("java-course-2024", "svp8");
 

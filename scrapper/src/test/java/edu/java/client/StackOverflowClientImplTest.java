@@ -26,16 +26,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static edu.java.client.StackOverflowClientImpl.SITE_STACKOVERFLOW;
 
 class StackOverflowClientImplTest {
-    public static WireMockServer wireMockServer=new WireMockServer();
+    public static WireMockServer wireMockServer = new WireMockServer();
     OffsetDateTime offsetDateTime = OffsetDateTime.of(2000, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
-    static StackOverflowClientImpl stackOverflowClient;
+    StackOverflowClientImpl stackOverflowClient =
+        new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
 
     @BeforeAll
     static void init() {
         wireMockServer.start();
-        System.out.println(wireMockServer.baseUrl());
-        stackOverflowClient = new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
-
     }
 
     @AfterAll
@@ -47,9 +45,9 @@ class StackOverflowClientImplTest {
     @Transactional
     @Rollback
     void getAnswersByQuestionId() {
-
         AnswerDto[] expectedDto =
-            new AnswerDto[] {new AnswerDto(1, true, offsetDateTime,12, offsetDateTime), new AnswerDto(2, true, offsetDateTime,12, offsetDateTime)};
+            new AnswerDto[] {new AnswerDto(1, true, offsetDateTime, 12, offsetDateTime),
+                new AnswerDto(2, true, offsetDateTime, 12, offsetDateTime)};
         GeneralResponse<AnswerDto> expected = new GeneralResponse<>();
         expected.setItems(expectedDto);
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())

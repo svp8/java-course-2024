@@ -11,15 +11,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LinkMapper implements RowMapper<LinkEntity> {
+
+    public static final String UTC = "UTC";
+
     @Override
     public LinkEntity mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         OffsetDateTime created = OffsetDateTime.ofInstant(
             Instant.ofEpochMilli(resultSet.getTimestamp("created_at").getTime()),
-            ZoneId.of("UTC")
+            ZoneId.of(UTC)
         );
         OffsetDateTime lastUpdated = OffsetDateTime.ofInstant(
             Instant.ofEpochMilli(resultSet.getTimestamp("last_updated_at").getTime()),
-            ZoneId.of("UTC")
+            ZoneId.of(UTC)
         );
         LinkEntity linkEntity = LinkEntity.builder()
             .id(resultSet.getInt("id"))

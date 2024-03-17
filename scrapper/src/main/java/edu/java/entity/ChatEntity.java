@@ -1,10 +1,11 @@
 package edu.java.entity;
 
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import java.time.OffsetDateTime;
+
 @Getter
 @Builder
 @AllArgsConstructor

@@ -3,17 +3,15 @@ package edu.java.repository.jdbc;
 import edu.java.entity.ChatEntity;
 import edu.java.entity.LinkEntity;
 import edu.java.scrapper.IntegrationTest;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest
 class JdbcChatLinkRepositoryTest extends IntegrationTest {
@@ -59,7 +57,7 @@ class JdbcChatLinkRepositoryTest extends IntegrationTest {
         //when
         List<ChatEntity> actual = chatLinkRepository.findChatsByLinkId(linkEntity.getId());
         //then
-        Assertions.assertEquals(expected,actual);
+        Assertions.assertEquals(expected, actual);
 
     }
 

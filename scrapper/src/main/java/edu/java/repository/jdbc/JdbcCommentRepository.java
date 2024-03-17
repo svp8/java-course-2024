@@ -1,6 +1,7 @@
 package edu.java.repository.jdbc;
 
 import edu.java.entity.CommentEntity;
+import edu.java.repository.stack.CommentRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -9,7 +10,6 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import edu.java.repository.stack.CommentRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

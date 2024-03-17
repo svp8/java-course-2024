@@ -42,7 +42,7 @@ class JdbcBranchRepositoryTest extends IntegrationTest {
         //when
         List<BranchEntity> actual = jdbcBranchRepository.getAllByLinkId(linkEntity.getId());
         //then
-        Assertions.assertEquals(2,actual.size());
+        Assertions.assertEquals(2, actual.size());
 
     }
 
@@ -62,6 +62,6 @@ class JdbcBranchRepositoryTest extends IntegrationTest {
         //when
         jdbcBranchRepository.delete(branchEntity1);
         //then
-        Assertions.assertTrue(jdbcBranchRepository.getByNameAndLinkId("123",linkEntity.getId()).isEmpty());
+        Assertions.assertTrue(jdbcBranchRepository.getByNameAndLinkId("123", linkEntity.getId()).isEmpty());
     }
 }

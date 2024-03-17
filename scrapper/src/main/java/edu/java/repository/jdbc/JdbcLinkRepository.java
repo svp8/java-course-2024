@@ -2,7 +2,6 @@ package edu.java.repository.jdbc;
 
 import edu.java.entity.LinkEntity;
 import edu.java.mapper.LinkMapper;
-import edu.java.repository.ChatLinkRepository;
 import edu.java.repository.LinkRepository;
 import java.time.Duration;
 import java.time.OffsetDateTime;
