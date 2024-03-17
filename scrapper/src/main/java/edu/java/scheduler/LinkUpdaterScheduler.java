@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,10 +26,10 @@ public class LinkUpdaterScheduler {
     private final Duration interval;
 
     public LinkUpdaterScheduler(
-            LinkRepository linkRepository,
-            GitHubUpdater gitHubUpdater,
-            StackUpdater stackUpdater,
-            @Value("${app.scheduler.interval}") Duration interval
+        LinkRepository linkRepository,
+        GitHubUpdater gitHubUpdater,
+        StackUpdater stackUpdater,
+        @Value("${app.scheduler.interval}") Duration interval
     ) {
         this.linkRepository = linkRepository;
         this.gitHubUpdater = gitHubUpdater;
@@ -36,7 +37,7 @@ public class LinkUpdaterScheduler {
         this.interval = interval;
     }
 
-    //    @Scheduled(fixedDelayString = "${app.scheduler.interval}")
+    @Scheduled(fixedDelayString = "${app.scheduler.interval}")
     public void update() {
         List<LinkEntity> list = linkRepository.findAllLastUpdated(interval);
         if (list != null) {

@@ -14,13 +14,10 @@ import edu.java.entity.ChatEntity;
 import edu.java.entity.LinkEntity;
 import edu.java.entity.PullEntity;
 import edu.java.repository.ChatLinkRepository;
-import edu.java.repository.LinkRepository;
 import edu.java.repository.github.BranchRepository;
 import edu.java.repository.github.PullRepository;
+import edu.java.service.LinkService;
 import edu.java.utils.LinkUtils;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,22 +33,22 @@ public class GitHubUpdater implements Updater {
     private final PullRepository pullRepository;
     private final BranchRepository branchRepository;
     private final ChatLinkRepository chatLinkRepository;
-    private final LinkRepository linkRepository;
     private final BotClient botClient;
+    private final LinkService linkService;
 
     public GitHubUpdater(
         GitHubClient gitHubClient,
         PullRepository pullRepository,
         BranchRepository branchRepository,
-        ChatLinkRepository chatLinkRepository, LinkRepository linkRepository,
-        BotClient botClient
+        ChatLinkRepository chatLinkRepository,
+        BotClient botClient, LinkService linkService
     ) {
         this.gitHubClient = gitHubClient;
         this.pullRepository = pullRepository;
         this.branchRepository = branchRepository;
         this.chatLinkRepository = chatLinkRepository;
-        this.linkRepository = linkRepository;
         this.botClient = botClient;
+        this.linkService = linkService;
     }
 
     @Transactional
@@ -116,16 +113,7 @@ public class GitHubUpdater implements Updater {
         }
         if (!linkUpdates.isEmpty()) {
             List<ChatEntity> chats = chatLinkRepository.findChatsByLinkId(linkEntity.getId());
-            Link link;
-            try {
-                link = new Link(new URI(linkEntity.getName()));
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-            //change last_updated_at
-            linkRepository.update(new LinkEntity(linkEntity.getId(), linkEntity.getName(), linkEntity.getCreatedAt(),
-                OffsetDateTime.now()
-            ));
+            Link link = linkService.update(linkEntity);
             //send to all chats update
             for (ChatEntity chat : chats) {
                 Update update = new Update(new Chat(chat.getId()), link, linkUpdates);

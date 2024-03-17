@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 @UtilityClass
 public class LinkUtils {
 
+    public static final String WRONG_LINK_FORMAT = "Wrong link format";
+
     public static boolean validate(String link) {
         return link.startsWith("https://github.com") || link.startsWith("https://stackoverflow.com/questions/");
     }
@@ -25,7 +27,7 @@ public class LinkUtils {
             repo = matcher.group(2);
         }
         if (user == null || repo == null) {
-            throw new InvalidLinkFormatException(HttpStatus.BAD_REQUEST.value(), "Wrong link format");
+            throw new InvalidLinkFormatException(HttpStatus.BAD_REQUEST.value(), WRONG_LINK_FORMAT);
         }
         return new GithubLink(user, repo);
     }
@@ -39,12 +41,12 @@ public class LinkUtils {
         }
         try {
             if (idString == null) {
-                throw new InvalidLinkFormatException(HttpStatus.BAD_REQUEST.value(), "Wrong link format");
+                throw new InvalidLinkFormatException(HttpStatus.BAD_REQUEST.value(), WRONG_LINK_FORMAT);
             }
             int id = Integer.parseInt(idString);
             return new StackLink(id);
         } catch (NumberFormatException e) {
-            throw new InvalidLinkFormatException(HttpStatus.BAD_REQUEST.value(), "Wrong link format");
+            throw new InvalidLinkFormatException(HttpStatus.BAD_REQUEST.value(), WRONG_LINK_FORMAT);
         }
 
     }

@@ -5,6 +5,8 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.dto.stack.AnswerDto;
 import edu.java.dto.stack.CommentDto;
 import edu.java.dto.stack.GeneralResponse;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,9 +18,6 @@ import wiremock.com.fasterxml.jackson.databind.JsonNode;
 import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
 import wiremock.com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import wiremock.com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
@@ -29,7 +28,9 @@ import static edu.java.client.StackOverflowClientImpl.SITE_STACKOVERFLOW;
 class StackOverflowClientImplTest {
     public static WireMockServer wireMockServer = new WireMockServer();
     OffsetDateTime offsetDateTime = OffsetDateTime.of(2000, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
-    StackOverflowClientImpl stackOverflowClient = new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
+    StackOverflowClientImpl stackOverflowClient =
+        new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
+
     @BeforeAll
     static void init() {
         wireMockServer.start();
@@ -45,7 +46,8 @@ class StackOverflowClientImplTest {
     @Rollback
     void getAnswersByQuestionId() {
         AnswerDto[] expectedDto =
-            new AnswerDto[] {new AnswerDto(1, true, offsetDateTime,12, offsetDateTime), new AnswerDto(2, true, offsetDateTime,12, offsetDateTime)};
+            new AnswerDto[] {new AnswerDto(1, true, offsetDateTime, 12, offsetDateTime),
+                new AnswerDto(2, true, offsetDateTime, 12, offsetDateTime)};
         GeneralResponse<AnswerDto> expected = new GeneralResponse<>();
         expected.setItems(expectedDto);
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())

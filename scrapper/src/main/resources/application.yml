@@ -11,7 +11,7 @@ spring:
     max-in-memory-size: 500MB
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5433/postgres
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: root
     driverClassName: org.postgresql.Driver

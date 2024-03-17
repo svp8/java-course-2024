@@ -1,4 +1,4 @@
-package edu.java.repository.jdbc;
+package edu.java.repository.jooq;
 
 import edu.java.entity.LinkEntity;
 import edu.java.entity.PullEntity;
@@ -13,21 +13,21 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class JdbcPullRepositoryTest extends IntegrationTest {
+class JooqPullRepositoryTest extends IntegrationTest {
     @Autowired
-    JdbcLinkRepository jdbcLinkRepository;
+    JooqLinkRepository linkRepository;
     @Autowired
-    JdbcPullRepository jdbcPullRepository;
+    JooqPullRepository pullRepository;
 
     @Test
     @Transactional
     @Rollback
     void getById() {
-        LinkEntity linkEntity = jdbcLinkRepository.add("333");
+        LinkEntity linkEntity = linkRepository.add("333");
         PullEntity expected = new PullEntity(1, "123", linkEntity.getId());
-        jdbcPullRepository.add(expected);
+        pullRepository.add(expected);
         //when
-        Optional<PullEntity> actual = jdbcPullRepository.getById(1);
+        Optional<PullEntity> actual = pullRepository.getById(1);
         //then
         Assertions.assertEquals(expected, actual.get());
     }
@@ -36,11 +36,11 @@ class JdbcPullRepositoryTest extends IntegrationTest {
     @Transactional
     @Rollback
     void getAllByLinkId() {
-        LinkEntity linkEntity = jdbcLinkRepository.add("333");
-        jdbcPullRepository.add(new PullEntity(1, "123", linkEntity.getId()));
-        jdbcPullRepository.add(new PullEntity(2, "124", linkEntity.getId()));
+        LinkEntity linkEntity = linkRepository.add("333");
+        pullRepository.add(new PullEntity(1, "123", linkEntity.getId()));
+        pullRepository.add(new PullEntity(2, "124", linkEntity.getId()));
         //when
-        List<PullEntity> actual = jdbcPullRepository.getAllByLinkId(linkEntity.getId());
+        List<PullEntity> actual = pullRepository.getAllByLinkId(linkEntity.getId());
         //then
         Assertions.assertEquals(2, actual.size());
 
@@ -56,12 +56,12 @@ class JdbcPullRepositoryTest extends IntegrationTest {
     @Transactional
     @Rollback
     void delete() {
-        LinkEntity linkEntity = jdbcLinkRepository.add("333");
-        PullEntity branchEntity1 = jdbcPullRepository.add(new PullEntity(1, "123", linkEntity.getId()));
-        PullEntity branchEntity2 = jdbcPullRepository.add(new PullEntity(2, "124", linkEntity.getId()));
+        LinkEntity linkEntity = linkRepository.add("333");
+        PullEntity branchEntity1 = pullRepository.add(new PullEntity(1, "123", linkEntity.getId()));
+        PullEntity branchEntity2 = pullRepository.add(new PullEntity(2, "124", linkEntity.getId()));
         //when
-        jdbcPullRepository.delete(branchEntity1);
+        pullRepository.delete(branchEntity1);
         //then
-        Assertions.assertTrue(jdbcPullRepository.getById(1).isEmpty());
+        Assertions.assertTrue(pullRepository.getById(1).isEmpty());
     }
 }

@@ -1,4 +1,4 @@
-package edu.java.repository.jdbc;
+package edu.java.repository.jooq;
 
 import edu.java.entity.BranchEntity;
 import edu.java.entity.LinkEntity;
@@ -13,11 +13,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class JdbcBranchRepositoryTest extends IntegrationTest {
+class JooqBranchRepositoryTest extends IntegrationTest {
     @Autowired
-    JdbcBranchRepository jdbcBranchRepository;
+    JooqBranchRepository jdbcBranchRepository;
     @Autowired
-    JdbcLinkRepository jdbcLinkRepository;
+    JooqLinkRepository jdbcLinkRepository;
 
     @Test
     @Transactional

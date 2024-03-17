@@ -27,6 +27,7 @@ public class UntrackCommand extends Command {
 
     /**
      * Gets list of links of specific chat and sends it to chat
+     *
      * @param chatId chatid
      */
     private void sendList(Long chatId) {

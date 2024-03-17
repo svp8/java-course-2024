@@ -1,14 +1,16 @@
 package edu.java.repository.jooq;
 
 import edu.java.entity.ChatEntity;
+import edu.java.repository.ChatRepository;
 import java.time.OffsetDateTime;
 import java.util.Optional;
-import edu.java.entity.LinkEntity;
-import edu.java.repository.ChatRepository;
 import org.jooq.DSLContext;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 import static scrapper.domain.jooq.Tables.CHAT;
-import static scrapper.domain.jooq.Tables.LINK;
 
+@Repository
+@Primary
 public class JooqChatRepository implements ChatRepository {
     private final DSLContext dsl;
 

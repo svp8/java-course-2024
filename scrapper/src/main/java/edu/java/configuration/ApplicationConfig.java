@@ -5,13 +5,23 @@ import edu.java.client.GitHubClient;
 import edu.java.client.GithubClientImpl;
 import edu.java.client.StackOverflowClient;
 import edu.java.client.StackOverflowClientImpl;
+import org.jooq.conf.RenderQuotedNames;
+import org.jooq.impl.DefaultConfiguration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class ApplicationConfig {
+    @Bean
+    public DefaultConfigurationCustomizer postgresJooqCustomizer() {
+        return (DefaultConfiguration c) -> c.settings()
+            .withRenderSchema(false)
+            .withRenderFormatted(true)
+            .withRenderQuotedNames(RenderQuotedNames.NEVER);
+    }
 
     @Bean
     public BotClient scrapperClient(@Value("${client.bot.baseurl}") String baseUrl, WebClient.Builder builder) {

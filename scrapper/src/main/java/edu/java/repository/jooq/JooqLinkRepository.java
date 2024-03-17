@@ -1,17 +1,21 @@
 package edu.java.repository.jooq;
 
 import edu.java.entity.LinkEntity;
+import edu.java.repository.LinkRepository;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import edu.java.repository.LinkRepository;
 import org.jooq.DSLContext;
 import org.jooq.DatePart;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 import static org.jooq.impl.DSL.currentTimestamp;
 import static org.jooq.impl.DSL.extract;
 import static scrapper.domain.jooq.Tables.LINK;
 
+@Repository
+@Primary
 public class JooqLinkRepository implements LinkRepository {
     private final JooqChatLinkRepository chatLinkRepository;
     private final DSLContext dsl;
@@ -24,7 +28,8 @@ public class JooqLinkRepository implements LinkRepository {
     @Override
     public LinkEntity add(String name) {
         return dsl.insertInto(LINK, LINK.NAME, LINK.CREATED_AT, LINK.LAST_UPDATED_AT)
-            .values(name,
+            .values(
+                name,
                 OffsetDateTime.now(),
                 OffsetDateTime.now()
             )

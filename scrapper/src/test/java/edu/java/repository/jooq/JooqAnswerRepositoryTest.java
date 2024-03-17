@@ -1,6 +1,6 @@
-package edu.java.repository.jdbc;
+package edu.java.repository.jooq;
 
-import edu.java.entity.CommentEntity;
+import edu.java.entity.AnswerEntity;
 import edu.java.entity.LinkEntity;
 import edu.java.scrapper.IntegrationTest;
 import java.time.OffsetDateTime;
@@ -14,11 +14,12 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class JdbcCommentRepositoryTest extends IntegrationTest {
+class JooqAnswerRepositoryTest extends IntegrationTest {
     @Autowired
-    JdbcLinkRepository jdbcLinkRepository;
+    JooqLinkRepository jdbcLinkRepository;
     @Autowired
-    JdbcCommentRepository jdbcCommentRepository;
+    JooqAnswerRepository jdbcAnswerRepository;
+
     OffsetDateTime offsetDateTime = OffsetDateTime.now();
 
     @Test
@@ -26,10 +27,10 @@ class JdbcCommentRepositoryTest extends IntegrationTest {
     @Rollback
     void getById() {
         LinkEntity linkEntity = jdbcLinkRepository.add("333");
-        CommentEntity expected = new CommentEntity(1, offsetDateTime, linkEntity.getId());
-        jdbcCommentRepository.add(expected);
+        AnswerEntity expected = new AnswerEntity(1, offsetDateTime, linkEntity.getId());
+        jdbcAnswerRepository.add(expected);
         //when
-        Optional<CommentEntity> actual = jdbcCommentRepository.getById(1);
+        Optional<AnswerEntity> actual = jdbcAnswerRepository.getById(expected.getId());
         //then
         Assertions.assertEquals(expected.getId(), actual.get().getId());
     }
@@ -39,10 +40,10 @@ class JdbcCommentRepositoryTest extends IntegrationTest {
     @Rollback
     void getAllByLinkId() {
         LinkEntity linkEntity = jdbcLinkRepository.add("333");
-        jdbcCommentRepository.add(new CommentEntity(1, offsetDateTime, linkEntity.getId()));
-        jdbcCommentRepository.add(new CommentEntity(2, offsetDateTime, linkEntity.getId()));
+        jdbcAnswerRepository.add(new AnswerEntity(1, offsetDateTime, linkEntity.getId()));
+        jdbcAnswerRepository.add(new AnswerEntity(2, offsetDateTime, linkEntity.getId()));
         //when
-        List<CommentEntity> actual = jdbcCommentRepository.getAllByLinkId(linkEntity.getId());
+        List<AnswerEntity> actual = jdbcAnswerRepository.getAllByLinkId(linkEntity.getId());
         //then
         Assertions.assertEquals(2, actual.size());
 
@@ -59,13 +60,11 @@ class JdbcCommentRepositoryTest extends IntegrationTest {
     @Rollback
     void delete() {
         LinkEntity linkEntity = jdbcLinkRepository.add("333");
-        CommentEntity commentEntity1 =
-            jdbcCommentRepository.add(new CommentEntity(1, offsetDateTime, linkEntity.getId()));
-        CommentEntity commentEntity2 =
-            jdbcCommentRepository.add(new CommentEntity(2, offsetDateTime, linkEntity.getId()));
+        AnswerEntity answerEntity1 = jdbcAnswerRepository.add(new AnswerEntity(1, offsetDateTime, linkEntity.getId()));
+        AnswerEntity answerEntity2 = jdbcAnswerRepository.add(new AnswerEntity(2, offsetDateTime, linkEntity.getId()));
         //when
-        jdbcCommentRepository.delete(commentEntity1);
+        jdbcAnswerRepository.delete(answerEntity1);
         //then
-        Assertions.assertTrue(jdbcCommentRepository.getById(1).isEmpty());
+        Assertions.assertTrue(jdbcAnswerRepository.getById(answerEntity1.getId()).isEmpty());
     }
 }

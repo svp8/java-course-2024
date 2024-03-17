@@ -1,4 +1,4 @@
-package edu.java.repository.jdbc;
+package edu.java.repository.jooq;
 
 import edu.java.entity.ChatEntity;
 import edu.java.entity.LinkEntity;
@@ -14,13 +14,13 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class JdbcChatLinkRepositoryTest extends IntegrationTest {
+class JooqChatLinkRepositoryTest extends IntegrationTest {
     @Autowired
-    private JdbcChatLinkRepository chatLinkRepository;
+    private JooqChatLinkRepository chatLinkRepository;
     @Autowired
-    private JdbcLinkRepository linkRepository;
+    private JooqLinkRepository linkRepository;
     @Autowired
-    private JdbcChatRepository chatRepository;
+    private JooqChatRepository chatRepository;
 
     @BeforeEach
     void init() {

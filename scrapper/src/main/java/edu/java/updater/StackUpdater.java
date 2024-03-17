@@ -14,13 +14,10 @@ import edu.java.entity.ChatEntity;
 import edu.java.entity.CommentEntity;
 import edu.java.entity.LinkEntity;
 import edu.java.repository.ChatLinkRepository;
-import edu.java.repository.LinkRepository;
 import edu.java.repository.stack.AnswerRepository;
 import edu.java.repository.stack.CommentRepository;
+import edu.java.service.LinkService;
 import edu.java.utils.LinkUtils;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,21 +30,21 @@ public class StackUpdater implements Updater {
     private final CommentRepository commentRepository;
     private final AnswerRepository answerRepository;
     private final ChatLinkRepository chatLinkRepository;
-    private final LinkRepository linkRepository;
+    private final LinkService linkService;
     private final BotClient botClient;
 
     public StackUpdater(
         StackOverflowClient stackOverflowClient,
         CommentRepository commentRepository,
         AnswerRepository answerRepository,
-        ChatLinkRepository chatLinkRepository, LinkRepository linkRepository,
+        ChatLinkRepository chatLinkRepository, LinkService linkService,
         BotClient botClient
     ) {
         this.stackOverflowClient = stackOverflowClient;
         this.commentRepository = commentRepository;
         this.answerRepository = answerRepository;
         this.chatLinkRepository = chatLinkRepository;
-        this.linkRepository = linkRepository;
+        this.linkService = linkService;
         this.botClient = botClient;
     }
 
@@ -101,36 +98,27 @@ public class StackUpdater implements Updater {
             }
         }
         List<LinkUpdate> linkUpdates = new ArrayList<>();
-        if (answerDtoList.size() > 0) {
+        if (!answerDtoList.isEmpty()) {
             answerDtoList.forEach(x -> {
                 answerRepository.add(AnswerEntity.builder().linkId(linkEntity.getId())
-                        .creationDate(x.getCreationDate())
-                        .id(x.getAnswerId())
+                    .creationDate(x.getCreationDate())
+                    .id(x.getAnswerId())
                     .build());
-                linkUpdates.add(new LinkUpdate("New answer was created at "+x.getCreationDate() ));
+                linkUpdates.add(new LinkUpdate("New answer was created at " + x.getCreationDate()));
             });
         }
-        if (commentDtoList.size() > 0) {
+        if (!commentDtoList.isEmpty()) {
             commentDtoList.forEach(x -> {
                 commentRepository.add(CommentEntity.builder().linkId(linkEntity.getId())
                     .creationDate(x.getCreationDate())
                     .id(x.getCommentId())
                     .build());
-                linkUpdates.add(new LinkUpdate("New comment was created at "+x.getCreationDate() ));
+                linkUpdates.add(new LinkUpdate("New comment was created at " + x.getCreationDate()));
             });
         }
         if (!linkUpdates.isEmpty()) {
             List<ChatEntity> chats = chatLinkRepository.findChatsByLinkId(linkEntity.getId());
-            Link link;
-            try {
-                link = new Link(new URI(linkEntity.getName()));
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-            //change last_updated_at
-            linkRepository.update(new LinkEntity(linkEntity.getId(), linkEntity.getName(), linkEntity.getCreatedAt(),
-                OffsetDateTime.now()
-            ));
+            Link link = linkService.update(linkEntity);
             //send to all chats update
             for (ChatEntity chat : chats) {
                 Update update = new Update(new Chat(chat.getId()), link, linkUpdates);

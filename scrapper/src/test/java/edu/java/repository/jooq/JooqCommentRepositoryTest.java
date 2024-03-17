@@ -1,4 +1,4 @@
-package edu.java.repository.jdbc;
+package edu.java.repository.jooq;
 
 import edu.java.entity.CommentEntity;
 import edu.java.entity.LinkEntity;
@@ -14,11 +14,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class JdbcCommentRepositoryTest extends IntegrationTest {
+class JooqCommentRepositoryTest extends IntegrationTest {
     @Autowired
-    JdbcLinkRepository jdbcLinkRepository;
+    JooqLinkRepository jdbcLinkRepository;
     @Autowired
-    JdbcCommentRepository jdbcCommentRepository;
+    JooqCommentRepository jdbcCommentRepository;
     OffsetDateTime offsetDateTime = OffsetDateTime.now();
 
     @Test
