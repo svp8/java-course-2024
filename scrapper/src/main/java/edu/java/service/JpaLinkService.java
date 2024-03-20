@@ -1,4 +1,4 @@
-package edu.java.service.jooq;
+package edu.java.service;
 
 import edu.java.dto.Link;
 import edu.java.entity.ChatEntity;
@@ -9,10 +9,8 @@ import edu.java.exception.InvalidLinkFormatException;
 import edu.java.exception.LinkNotTrackedException;
 import edu.java.exception.NoSuchLinkException;
 import edu.java.exception.URIException;
-import edu.java.repository.jooq.JooqChatLinkRepository;
-import edu.java.repository.jooq.JooqChatRepository;
-import edu.java.repository.jooq.JooqLinkRepository;
-import edu.java.service.LinkService;
+import edu.java.repository.jpa.JpaChatRepository;
+import edu.java.repository.jpa.JpaLinkRepository;
 import edu.java.utils.LinkUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,31 +18,26 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Primary
-public class JooqLinkService implements LinkService {
+public class JpaLinkService implements LinkService {
     public static final String CHAT_ISN_T_REGISTERED = "Chat isn`t registered";
-    private final JooqLinkRepository linkRepository;
-    private final JooqChatRepository chatRepository;
-    private final JooqChatLinkRepository chatLinkRepository;
+    private final JpaLinkRepository linkRepository;
+    private final JpaChatRepository chatRepository;
 
-    public JooqLinkService(
-        JooqLinkRepository linkRepository,
-        JooqChatRepository chatRepository,
-        JooqChatLinkRepository chatLinkRepository
-    ) {
+    public JpaLinkService(JpaLinkRepository linkRepository, JpaChatRepository chatRepository) {
         this.linkRepository = linkRepository;
         this.chatRepository = chatRepository;
-        this.chatLinkRepository = chatLinkRepository;
+    }
+
+    private void checkChatIdInDb(long chatId) {
+        //if no such chat in db, throw exception
+        if (chatRepository.findById(chatId).isEmpty()) {
+            throw new InvalidChatIdException(HttpStatus.NOT_FOUND.value(), CHAT_ISN_T_REGISTERED);
+        }
     }
 
     @Override
-
     public Link track(String name, long chatId) {
         checkChatIdInDb(chatId);
         if (name.startsWith("https://github.com")) {
@@ -55,14 +48,18 @@ public class JooqLinkService implements LinkService {
             throw new InvalidLinkFormatException(HttpStatus.BAD_REQUEST.value(), "Wrong link format");
         }
 
-        Optional<LinkEntity> link = linkRepository.getByLinkName(name);
+        Optional<LinkEntity> link = linkRepository.findByName(name);
         LinkEntity linkEntity;
         if (link.isEmpty()) {
-            linkEntity = linkRepository.add(name);
+            linkEntity = linkRepository.save(LinkEntity.builder()
+                .name(name)
+                .lastUpdatedAt(OffsetDateTime.now())
+                .createdAt(OffsetDateTime.now())
+                .build());
         } else {
             linkEntity = link.get();
         }
-        List<LinkEntity> linkList = linkRepository.findAllByChatId(chatId);
+        List<LinkEntity> linkList = linkRepository.findByChatId(chatId);
         if (linkList.stream().anyMatch(l -> l.getName().equals(name))) {
             throw new DuplicateLinkException(
                 HttpStatus.BAD_REQUEST.value(),
@@ -76,18 +73,16 @@ public class JooqLinkService implements LinkService {
         } catch (URISyntaxException e) {
             throw new URIException(HttpStatus.BAD_REQUEST.value(), "Bad Uri");
         }
-
     }
 
     @Override
-
     public void untrack(String name, long chatId) {
         checkChatIdInDb(chatId);
-        Optional<LinkEntity> link = linkRepository.getByLinkName(name);
+        Optional<LinkEntity> link = linkRepository.findByName(name);
         if (link.isEmpty()) {
             throw new NoSuchLinkException(HttpStatus.NOT_FOUND.value(), "Link is not created");
         } else {
-            List<LinkEntity> linkList = linkRepository.findAllByChatId(chatId);
+            List<LinkEntity> linkList = linkRepository.findByChatId(chatId);
             //если к чату не привязана ссылка
             if (linkList == null || linkList.stream().noneMatch(l -> l.getName().equals(name))) {
                 throw new LinkNotTrackedException(HttpStatus.NOT_FOUND.value(), "Link is not tracked by this chat");
@@ -96,22 +91,15 @@ public class JooqLinkService implements LinkService {
             List<ChatEntity> chats = chatLinkRepository.findChatsByLinkId(link.get().getId());
             if (chats == null || chats.isEmpty()) {
                 //delete link and all connected
-                linkRepository.remove(link.get().getId());
+                linkRepository.deleteById(link.get().getId());
             }
-        }
-    }
-
-    private void checkChatIdInDb(long chatId) {
-        //if no such chat in db, throw exception
-        if (chatRepository.getChatById(chatId).isEmpty()) {
-            throw new InvalidChatIdException(HttpStatus.NOT_FOUND.value(), CHAT_ISN_T_REGISTERED);
         }
     }
 
     @Override
     public List<Link> getAllByChatId(long chatId) {
         checkChatIdInDb(chatId);
-        List<LinkEntity> allByChatId = linkRepository.findAllByChatId(chatId);
+        List<LinkEntity> allByChatId = linkRepository.findByChatId(chatId);
         if (allByChatId == null) {
             return null;
         }
@@ -133,7 +121,7 @@ public class JooqLinkService implements LinkService {
             throw new RuntimeException(e);
         }
         //change last_updated_at
-        linkRepository.update(new LinkEntity(linkEntity.getId(), linkEntity.getName(), linkEntity.getCreatedAt(),
+        linkRepository.save(new LinkEntity(linkEntity.getId(), linkEntity.getName(), linkEntity.getCreatedAt(),
             OffsetDateTime.now()
         ));
         return link;
