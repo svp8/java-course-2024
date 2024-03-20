@@ -18,6 +18,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
@@ -29,6 +30,7 @@ public abstract class IntegrationTest {
             .withDatabaseName("scrapper")
             .withUsername("postgres")
             .withPassword("postgres");
+        POSTGRES.waitingFor(Wait.forListeningPort());
         POSTGRES.start();
 
         try {
@@ -40,18 +42,21 @@ public abstract class IntegrationTest {
 
     private static void runMigrations(JdbcDatabaseContainer<?> c)
         throws LiquibaseException, SQLException, FileNotFoundException {
-        Connection connection = DriverManager.getConnection(
-            POSTGRES.getJdbcUrl(),
-            POSTGRES.getUsername(),
-            POSTGRES.getPassword()
-        );
-        Database database =
-            DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-        Path pathToChangeLog = new File("").getAbsoluteFile().toPath().getParent().resolve("migrations");
-        Liquibase liquibase =
-            new liquibase.Liquibase("master.xml", new DirectoryResourceAccessor(pathToChangeLog), database);
-        liquibase.update(new Contexts(), new LabelExpression());
-        connection.close();
+        try (
+            Connection connection = DriverManager.getConnection(
+                POSTGRES.getJdbcUrl(),
+                POSTGRES.getUsername(),
+                POSTGRES.getPassword()
+            );
+            Database database = DatabaseFactory.getInstance()
+                .findCorrectDatabaseImplementation(new JdbcConnection(connection))
+        ) {
+            Path pathToChangeLog = new File("").getAbsoluteFile().toPath().getParent().resolve("migrations");
+            Liquibase liquibase =
+                new liquibase.Liquibase("master.xml", new DirectoryResourceAccessor(pathToChangeLog), database);
+            liquibase.update(new Contexts(), new LabelExpression());
+
+        }
     }
 
     @DynamicPropertySource
