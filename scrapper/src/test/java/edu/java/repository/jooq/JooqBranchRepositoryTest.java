@@ -10,24 +10,29 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 class JooqBranchRepositoryTest extends IntegrationTest {
     @Autowired
-    JooqBranchRepository jdbcBranchRepository;
+    JooqBranchRepository jooqBranchRepository;
     @Autowired
-    JooqLinkRepository jdbcLinkRepository;
-
+    JooqLinkRepository jooqLinkRepository;
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", ()->"jooq");
+    }
     @Test
     @Transactional
     @Rollback
     void getByNameAndLinkId() {
-        LinkEntity linkEntity = jdbcLinkRepository.add("333");
+        LinkEntity linkEntity = jooqLinkRepository.add("333");
         BranchEntity expected = new BranchEntity("123", linkEntity.getId());
-        jdbcBranchRepository.add(expected);
+        jooqBranchRepository.add(expected);
         //when
-        Optional<BranchEntity> actual = jdbcBranchRepository.getByNameAndLinkId("123", expected.getLinkId());
+        Optional<BranchEntity> actual = jooqBranchRepository.getByNameAndLinkId("123", expected.getLinkId());
         //then
         Assertions.assertEquals(expected, actual.get());
     }
@@ -36,11 +41,11 @@ class JooqBranchRepositoryTest extends IntegrationTest {
     @Transactional
     @Rollback
     void getAllByLinkId() {
-        LinkEntity linkEntity = jdbcLinkRepository.add("333");
-        jdbcBranchRepository.add(new BranchEntity("123", linkEntity.getId()));
-        jdbcBranchRepository.add(new BranchEntity("124", linkEntity.getId()));
+        LinkEntity linkEntity = jooqLinkRepository.add("333");
+        jooqBranchRepository.add(new BranchEntity("123", linkEntity.getId()));
+        jooqBranchRepository.add(new BranchEntity("124", linkEntity.getId()));
         //when
-        List<BranchEntity> actual = jdbcBranchRepository.getAllByLinkId(linkEntity.getId());
+        List<BranchEntity> actual = jooqBranchRepository.getAllByLinkId(linkEntity.getId());
         //then
         Assertions.assertEquals(2, actual.size());
 
@@ -56,12 +61,12 @@ class JooqBranchRepositoryTest extends IntegrationTest {
     @Transactional
     @Rollback
     void delete() {
-        LinkEntity linkEntity = jdbcLinkRepository.add("333");
-        BranchEntity branchEntity1 = jdbcBranchRepository.add(new BranchEntity("123", linkEntity.getId()));
-        BranchEntity branchEntity2 = jdbcBranchRepository.add(new BranchEntity("124", linkEntity.getId()));
+        LinkEntity linkEntity = jooqLinkRepository.add("333");
+        BranchEntity branchEntity1 = jooqBranchRepository.add(new BranchEntity("123", linkEntity.getId()));
+        BranchEntity branchEntity2 = jooqBranchRepository.add(new BranchEntity("124", linkEntity.getId()));
         //when
-        jdbcBranchRepository.delete(branchEntity1);
+        jooqBranchRepository.delete(branchEntity1);
         //then
-        Assertions.assertTrue(jdbcBranchRepository.getByNameAndLinkId("123", linkEntity.getId()).isEmpty());
+        Assertions.assertTrue(jooqBranchRepository.getByNameAndLinkId("123", linkEntity.getId()).isEmpty());
     }
 }

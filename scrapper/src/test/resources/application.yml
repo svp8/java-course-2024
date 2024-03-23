@@ -1,9 +1,9 @@
 app:
   scheduler:
-    enable: true
+    enable: false
     interval: PT10S
     force-check-delay: PT10S
-
+  database-access-type: jdbc
 spring:
   liquibase:
     enabled: false

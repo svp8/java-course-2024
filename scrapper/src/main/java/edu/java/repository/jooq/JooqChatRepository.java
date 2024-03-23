@@ -5,12 +5,8 @@ import edu.java.repository.ChatRepository;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import org.jooq.DSLContext;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
 import static scrapper.domain.jooq.Tables.CHAT;
 
-@Repository
-@Primary
 public class JooqChatRepository implements ChatRepository {
     private final DSLContext dsl;
 

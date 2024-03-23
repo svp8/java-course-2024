@@ -1,8 +1,9 @@
 app:
   scheduler:
-    enable: true
+    enable: false
     interval: PT10S
     force-check-delay: PT10S
+  database-access-type: jdbc
 
 spring:
   application:
@@ -15,7 +16,11 @@ spring:
     username: postgres
     password: root
     driverClassName: org.postgresql.Driver
-
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
 client:
   github:
     baseurl: https://api.github.com

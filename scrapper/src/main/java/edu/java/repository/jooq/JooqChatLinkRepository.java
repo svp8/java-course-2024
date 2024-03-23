@@ -5,14 +5,10 @@ import edu.java.entity.LinkEntity;
 import edu.java.repository.ChatLinkRepository;
 import java.util.List;
 import org.jooq.DSLContext;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
 import static scrapper.domain.jooq.Tables.CHAT;
 import static scrapper.domain.jooq.Tables.CHAT_LINK;
 import static scrapper.domain.jooq.Tables.LINK;
 
-@Repository
-@Primary
 public class JooqChatLinkRepository implements ChatLinkRepository {
     private final DSLContext dsl;
 

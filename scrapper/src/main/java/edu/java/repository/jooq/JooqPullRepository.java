@@ -5,12 +5,8 @@ import edu.java.repository.github.PullRepository;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
 import static scrapper.domain.jooq.Tables.PULL_REQUEST;
 
-@Repository
-@Primary
 public class JooqPullRepository implements PullRepository {
     private final DSLContext dsl;
 

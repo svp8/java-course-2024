@@ -1,4 +1,4 @@
-package edu.java.service;
+package edu.java.service.jpa;
 
 import edu.java.dto.Link;
 import edu.java.entity.ChatEntity;
@@ -11,10 +11,13 @@ import edu.java.exception.NoSuchLinkException;
 import edu.java.exception.URIException;
 import edu.java.repository.jpa.JpaChatRepository;
 import edu.java.repository.jpa.JpaLinkRepository;
+import edu.java.service.LinkService;
 import edu.java.utils.LinkUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,16 +33,18 @@ public class JpaLinkService implements LinkService {
         this.chatRepository = chatRepository;
     }
 
-    private void checkChatIdInDb(long chatId) {
+    private ChatEntity checkChatIdInDb(long chatId) {
         //if no such chat in db, throw exception
-        if (chatRepository.findById(chatId).isEmpty()) {
+        Optional<ChatEntity> chatEntity = chatRepository.findById(chatId);
+        if (chatEntity.isEmpty()) {
             throw new InvalidChatIdException(HttpStatus.NOT_FOUND.value(), CHAT_ISN_T_REGISTERED);
         }
+        return chatEntity.get();
     }
 
     @Override
     public Link track(String name, long chatId) {
-        checkChatIdInDb(chatId);
+        ChatEntity chatEntity = checkChatIdInDb(chatId);
         if (name.startsWith("https://github.com")) {
             LinkUtils.parseGithubLink(name);
         } else if (name.startsWith("https://stackoverflow.com/questions/")) {
@@ -51,24 +56,27 @@ public class JpaLinkService implements LinkService {
         Optional<LinkEntity> link = linkRepository.findByName(name);
         LinkEntity linkEntity;
         if (link.isEmpty()) {
-            linkEntity = linkRepository.save(LinkEntity.builder()
+            linkEntity = LinkEntity.builder()
                 .name(name)
                 .lastUpdatedAt(OffsetDateTime.now())
                 .createdAt(OffsetDateTime.now())
-                .build());
+                .chats(new ArrayList<>())
+                .build();
+            linkEntity.getChats().add(chatEntity);
         } else {
             linkEntity = link.get();
+            List<LinkEntity> linkList = linkRepository.findByChats_Id(chatId);
+            if (linkList.stream().anyMatch(l -> l.getName().equals(name))) {
+                throw new DuplicateLinkException(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Link is already tracked by this chat"
+                );
+            }
+            linkEntity.getChats().add(chatEntity);
         }
-        List<LinkEntity> linkList = linkRepository.findByChatId(chatId);
-        if (linkList.stream().anyMatch(l -> l.getName().equals(name))) {
-            throw new DuplicateLinkException(
-                HttpStatus.BAD_REQUEST.value(),
-                "Link is already tracked by this chat"
-            );
-        }
+        linkEntity = linkRepository.save(linkEntity);
         try {
-            Link createdLink = new Link(new URI(name.trim()));
-            chatLinkRepository.create(chatId, linkEntity.getId());
+            Link createdLink = new Link(new URI(linkEntity.getName().trim()));
             return createdLink;
         } catch (URISyntaxException e) {
             throw new URIException(HttpStatus.BAD_REQUEST.value(), "Bad Uri");
@@ -82,16 +90,18 @@ public class JpaLinkService implements LinkService {
         if (link.isEmpty()) {
             throw new NoSuchLinkException(HttpStatus.NOT_FOUND.value(), "Link is not created");
         } else {
-            List<LinkEntity> linkList = linkRepository.findByChatId(chatId);
+            LinkEntity linkEntity = link.get();
+            List<LinkEntity> linkList = linkRepository.findByChats_Id(chatId);
             //если к чату не привязана ссылка
             if (linkList == null || linkList.stream().noneMatch(l -> l.getName().equals(name))) {
                 throw new LinkNotTrackedException(HttpStatus.NOT_FOUND.value(), "Link is not tracked by this chat");
             }
-            chatLinkRepository.remove(chatId, link.get().getId());
-            List<ChatEntity> chats = chatLinkRepository.findChatsByLinkId(link.get().getId());
-            if (chats == null || chats.isEmpty()) {
-                //delete link and all connected
-                linkRepository.deleteById(link.get().getId());
+            List<ChatEntity> chats =
+                new ArrayList<>(linkEntity.getChats().stream().filter(x -> x.getId() != chatId).toList());
+            linkEntity.setChats(chats);
+            linkRepository.save(linkEntity);
+            if (linkEntity.getChats().isEmpty()) {
+                linkRepository.deleteById(linkEntity.getId());
             }
         }
     }
@@ -99,7 +109,7 @@ public class JpaLinkService implements LinkService {
     @Override
     public List<Link> getAllByChatId(long chatId) {
         checkChatIdInDb(chatId);
-        List<LinkEntity> allByChatId = linkRepository.findByChatId(chatId);
+        List<LinkEntity> allByChatId = linkRepository.findByChats_Id(chatId);
         if (allByChatId == null) {
             return null;
         }
@@ -121,9 +131,14 @@ public class JpaLinkService implements LinkService {
             throw new RuntimeException(e);
         }
         //change last_updated_at
-        linkRepository.save(new LinkEntity(linkEntity.getId(), linkEntity.getName(), linkEntity.getCreatedAt(),
-            OffsetDateTime.now()
-        ));
+        linkEntity.setLastUpdatedAt(OffsetDateTime.now());
+        linkRepository.save(linkEntity);
         return link;
+    }
+
+    @Override
+    public List<LinkEntity> findAllLastUpdated(Duration interval) {
+
+        return linkRepository.findAllLastUpdated(interval.toSeconds());
     }
 }

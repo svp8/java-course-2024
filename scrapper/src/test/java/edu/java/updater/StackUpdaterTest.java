@@ -12,9 +12,10 @@ import edu.java.entity.LinkEntity;
 import edu.java.repository.ChatLinkRepository;
 import edu.java.repository.ChatRepository;
 import edu.java.repository.LinkRepository;
-import edu.java.repository.stack.AnswerRepository;
-import edu.java.repository.stack.CommentRepository;
 import edu.java.scrapper.IntegrationTest;
+import edu.java.service.AnswerService;
+import edu.java.service.ChatService;
+import edu.java.service.CommentService;
 import edu.java.service.LinkService;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -50,11 +51,13 @@ class StackUpdaterTest extends IntegrationTest {
     }
 
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentService commentService;
     @Autowired
-    private AnswerRepository answerRepository;
+    private AnswerService answerService;
     @Autowired
     private ChatLinkRepository chatLinkRepository;
+    @Autowired
+    private ChatService chatService;
     @Autowired
     private LinkRepository linkRepository;
     @Autowired
@@ -115,9 +118,8 @@ class StackUpdaterTest extends IntegrationTest {
         chatLinkRepository.create(1, linkEntity.getId());
         StackUpdater stackUpdater = new StackUpdater(
             stackOverflowClient,
-            commentRepository,
-            answerRepository,
-            chatLinkRepository,
+
+            commentService, answerService, chatService,
             linkService,
             botClient
         );
@@ -127,7 +129,7 @@ class StackUpdaterTest extends IntegrationTest {
         wireMockServer.verify(getRequestedFor(urlEqualTo(testUriAnswer)));
         wireMockServer.verify(getRequestedFor(urlEqualTo(testUriComment)));
         wireMockServer.verify(postRequestedFor(urlEqualTo(testUrlClient)));
-        Assertions.assertEquals(2, commentRepository.getAllByLinkId(linkEntity.getId()).size());
-        Assertions.assertEquals(2, answerRepository.getAllByLinkId(linkEntity.getId()).size());
+        Assertions.assertEquals(2, commentService.getAllByLinkId(linkEntity.getId()).size());
+        Assertions.assertEquals(2, answerService.getAllByLinkId(linkEntity.getId()).size());
     }
 }

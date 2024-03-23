@@ -16,15 +16,14 @@ import edu.java.service.LinkService;
 import edu.java.utils.LinkUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 public class JdbcLinkService implements LinkService {
     public static final String CHAT_ISN_T_REGISTERED = "Chat isn`t registered";
     private final JdbcLinkRepository linkRepository;
@@ -135,5 +134,10 @@ public class JdbcLinkService implements LinkService {
             OffsetDateTime.now()
         ));
         return link;
+    }
+
+    @Override
+    public List<LinkEntity> findAllLastUpdated(Duration interval) {
+        return linkRepository.findAllLastUpdated(interval);
     }
 }

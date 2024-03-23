@@ -10,10 +10,11 @@ import edu.java.entity.LinkEntity;
 import edu.java.repository.ChatLinkRepository;
 import edu.java.repository.ChatRepository;
 import edu.java.repository.LinkRepository;
-import edu.java.repository.github.BranchRepository;
-import edu.java.repository.github.PullRepository;
 import edu.java.scrapper.IntegrationTest;
+import edu.java.service.BranchService;
+import edu.java.service.ChatService;
 import edu.java.service.LinkService;
+import edu.java.service.PullService;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -36,11 +37,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 @SpringBootTest
 class GitHubUpdaterTest extends IntegrationTest {
     @Autowired
-    private PullRepository pullRepository;
+    private PullService pullRepository;
     @Autowired
-    private BranchRepository branchRepository;
+    private BranchService branchRepository;
     @Autowired
     private ChatLinkRepository chatLinkRepository;
+    private ChatService chatService;
     @Autowired
     private LinkRepository linkRepository;
     @Autowired
@@ -105,7 +107,7 @@ class GitHubUpdaterTest extends IntegrationTest {
         GitHubUpdater gitHubUpdater = new GitHubUpdater(githubClient,
             pullRepository,
             branchRepository,
-            chatLinkRepository,
+            chatService,
             botClient, linkService
         );
 

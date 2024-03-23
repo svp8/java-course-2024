@@ -9,9 +9,7 @@ import java.util.List;
 import javax.sql.DataSource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class JdbcChatLinkRepository implements ChatLinkRepository {
     JdbcTemplate jdbcTemplate;
     private final LinkMapper linkMapper;

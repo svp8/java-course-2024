@@ -12,9 +12,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class JdbcAnswerRepository implements AnswerRepository {
     private final JdbcTemplate jdbcTemplate;
 

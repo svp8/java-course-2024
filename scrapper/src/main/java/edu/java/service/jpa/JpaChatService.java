@@ -3,13 +3,12 @@ package edu.java.service.jpa;
 import edu.java.entity.ChatEntity;
 import edu.java.exception.InvalidChatIdException;
 import edu.java.repository.jpa.JpaChatRepository;
-import java.time.OffsetDateTime;
-import java.util.Optional;
 import edu.java.service.ChatService;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
-@Service
 public class JpaChatService implements ChatService {
     private final JpaChatRepository chatRepository;
 
@@ -32,5 +31,10 @@ public class JpaChatService implements ChatService {
             throw new InvalidChatIdException(HttpStatus.BAD_REQUEST.value(), "Chat is already registered");
         }
         chatRepository.delete(chatRepositoryById.get());
+    }
+
+    @Override
+    public List<ChatEntity> findChatsByLinkId(int id) {
+        return chatRepository.findByLinks_Id(id);
     }
 }

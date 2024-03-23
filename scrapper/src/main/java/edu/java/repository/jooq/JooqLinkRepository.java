@@ -8,14 +8,10 @@ import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.DatePart;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Repository;
 import static org.jooq.impl.DSL.currentTimestamp;
 import static org.jooq.impl.DSL.extract;
 import static scrapper.domain.jooq.Tables.LINK;
 
-@Repository
-@Primary
 public class JooqLinkRepository implements LinkRepository {
     private final JooqChatLinkRepository chatLinkRepository;
     private final DSLContext dsl;
