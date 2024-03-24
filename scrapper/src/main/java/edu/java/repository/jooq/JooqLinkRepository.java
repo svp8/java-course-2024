@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.DatePart;
+import org.jooq.Record1;
+import org.jooq.Result;
+import scrapper.domain.jooq.tables.records.LinkRecord;
 import static org.jooq.impl.DSL.currentTimestamp;
 import static org.jooq.impl.DSL.extract;
 import static scrapper.domain.jooq.Tables.LINK;
@@ -45,6 +48,9 @@ public class JooqLinkRepository implements LinkRepository {
 
     @Override
     public Optional<LinkEntity> getByLinkName(String name) {
+        Result<Record1<LinkRecord>> fetch = dsl.select(LINK)
+            .from(LINK)
+            .where(LINK.NAME.eq(name)).fetch();
         LinkEntity linkEntity = dsl.select(LINK)
             .from(LINK)
             .where(LINK.NAME.eq(name)).fetchOneInto(LinkEntity.class);

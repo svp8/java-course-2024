@@ -22,10 +22,12 @@ class JdbcCommentRepositoryTest extends IntegrationTest {
     @Autowired
     JdbcCommentRepository jdbcCommentRepository;
     OffsetDateTime offsetDateTime = OffsetDateTime.now();
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jdbc");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
+
     @Test
     @Transactional
     @Rollback

@@ -27,10 +27,12 @@ class JpaBranchServiceTest extends IntegrationTest {
     @Autowired JpaLinkRepository linkRepository;
     @Autowired JpaChatRepository jpaChatRepository;
     @Autowired JpaBranchRepository jpaBranchRepository;
+
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jpa");
+        registry.add("app.database-access-type", () -> "jpa");
     }
+
     @Test
     @Transactional
     @Rollback
@@ -45,15 +47,14 @@ class JpaBranchServiceTest extends IntegrationTest {
             .chats(List.of(chat))
             .build();
         LinkEntity saved = linkRepository.save(linkEntity);
-        expected.add(jpaBranchService.add(new BranchEntity("1",linkEntity.getId())));
-        expected.add(jpaBranchService.add(new BranchEntity("2",linkEntity.getId())));
-        expected.add(jpaBranchService.add(new BranchEntity("3",linkEntity.getId())));
+        expected.add(jpaBranchService.add(new BranchEntity("1", linkEntity.getId())));
+        expected.add(jpaBranchService.add(new BranchEntity("2", linkEntity.getId())));
+        expected.add(jpaBranchService.add(new BranchEntity("3", linkEntity.getId())));
         //when
         List<BranchEntity> actual = jpaBranchService.getAllByLinkId(saved.getId());
         //then
         Assertions.assertEquals(expected, actual);
     }
-
 
     @Test
     @Rollback
@@ -68,11 +69,11 @@ class JpaBranchServiceTest extends IntegrationTest {
             .chats(List.of(chat))
             .build();
         linkRepository.save(linkEntity);
-        BranchEntity entity = new BranchEntity("1",linkEntity.getId());
+        BranchEntity entity = new BranchEntity("1", linkEntity.getId());
         jpaBranchService.add(entity);
         //when
         jpaBranchService.delete(entity);
         //then
-        Assertions.assertTrue(jpaBranchRepository.findById(new BranchId("1",linkEntity.getId())).isEmpty());
+        Assertions.assertTrue(jpaBranchRepository.findById(new BranchId("1", linkEntity.getId())).isEmpty());
     }
 }

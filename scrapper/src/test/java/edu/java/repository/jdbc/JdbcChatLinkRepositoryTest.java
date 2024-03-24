@@ -23,10 +23,12 @@ class JdbcChatLinkRepositoryTest extends IntegrationTest {
     private JdbcLinkRepository linkRepository;
     @Autowired
     private JdbcChatRepository chatRepository;
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jdbc");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
+
     @BeforeEach
     void init() {
     }

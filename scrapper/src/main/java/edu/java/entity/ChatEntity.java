@@ -1,5 +1,6 @@
 package edu.java.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -25,6 +26,7 @@ import lombok.NoArgsConstructor;
 public class ChatEntity {
     @Id
     private long id;
+    @Column(name = "created_at")
     private OffsetDateTime createdAt;
 
     public ChatEntity(long id, OffsetDateTime createdAt) {

@@ -42,6 +42,7 @@ class GitHubUpdaterTest extends IntegrationTest {
     private BranchService branchRepository;
     @Autowired
     private ChatLinkRepository chatLinkRepository;
+    @Autowired
     private ChatService chatService;
     @Autowired
     private LinkRepository linkRepository;

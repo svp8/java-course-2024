@@ -3,7 +3,7 @@ app:
     enable: false
     interval: PT10S
     force-check-delay: PT10S
-  database-access-type: jdbc
+  database-access-type: jooq
 
 spring:
   application:
@@ -20,7 +20,6 @@ spring:
     hibernate:
       ddl-auto: none
     database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
 client:
   github:
     baseurl: https://api.github.com
@@ -36,4 +35,8 @@ server:
 
 logging:
   config: classpath:log4j2-plain.xml
-
+  level:
+    org:
+      jooq:
+        tools:
+          LoggerListener: DEBUG

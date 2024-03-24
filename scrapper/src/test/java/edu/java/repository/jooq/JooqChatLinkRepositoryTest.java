@@ -23,10 +23,12 @@ class JooqChatLinkRepositoryTest extends IntegrationTest {
     private JooqLinkRepository linkRepository;
     @Autowired
     private JooqChatRepository chatRepository;
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jooq");
+        registry.add("app.database-access-type", () -> "jooq");
     }
+
     @BeforeEach
     void init() {
     }

@@ -20,10 +20,12 @@ class JdbcBranchRepositoryTest extends IntegrationTest {
     JdbcBranchRepository jdbcBranchRepository;
     @Autowired
     JdbcLinkRepository jdbcLinkRepository;
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jdbc");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
+
     @Test
     @Transactional
     @Rollback

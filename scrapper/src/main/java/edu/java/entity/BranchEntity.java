@@ -1,5 +1,6 @@
 package edu.java.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -9,11 +10,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Entity
 @IdClass(BranchId.class)
 @Table(name = "branch")
@@ -22,6 +25,7 @@ public class BranchEntity {
     private String name;
 
     @Id
+    @Column(name = "link_id")
     private int linkId;
 
     @Override public boolean equals(Object o) {

@@ -26,10 +26,12 @@ class JpaCommentServiceTest extends IntegrationTest {
     @Autowired JpaLinkRepository linkRepository;
     @Autowired JpaChatRepository jpaChatRepository;
     @Autowired JpaCommentRepository jpaCommentRepository;
+
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jpa");
+        registry.add("app.database-access-type", () -> "jpa");
     }
+
     @Test
     @Transactional
     @Rollback
@@ -44,16 +46,15 @@ class JpaCommentServiceTest extends IntegrationTest {
             .chats(List.of(chat))
             .build();
         LinkEntity saved = linkRepository.save(linkEntity);
-        expected.add(jpaCommentService.add(new CommentEntity(1,OffsetDateTime.now(),linkEntity.getId())));
-        expected.add(jpaCommentService.add(new CommentEntity(1,OffsetDateTime.now(),linkEntity.getId())));
-        expected.add(jpaCommentService.add(new CommentEntity(1,OffsetDateTime.now(),linkEntity.getId())));
+        expected.add(jpaCommentService.add(new CommentEntity(1, OffsetDateTime.now(), saved.getId())));
+        expected.add(jpaCommentService.add(new CommentEntity(2, OffsetDateTime.now(), saved.getId())));
+        expected.add(jpaCommentService.add(new CommentEntity(3, OffsetDateTime.now(), saved.getId())));
 
         //when
         List<CommentEntity> actual = jpaCommentService.getAllByLinkId(saved.getId());
         //then
         Assertions.assertEquals(expected, actual);
     }
-
 
     @Test
     @Rollback
@@ -68,7 +69,7 @@ class JpaCommentServiceTest extends IntegrationTest {
             .chats(List.of(chat))
             .build();
         linkRepository.save(linkEntity);
-        CommentEntity entity = new CommentEntity(1,OffsetDateTime.now(),linkEntity.getId());
+        CommentEntity entity = new CommentEntity(1, OffsetDateTime.now(), linkEntity.getId());
         jpaCommentService.add(entity);
         //when
         jpaCommentService.delete(entity);

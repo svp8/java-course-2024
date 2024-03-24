@@ -4,6 +4,7 @@ import edu.java.entity.ChatEntity;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+@SuppressWarnings("MethodName")
 public interface JpaChatRepository extends JpaRepository<ChatEntity, Long> {
     List<ChatEntity> findByLinks_Id(long linkId);
 }

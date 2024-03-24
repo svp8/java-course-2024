@@ -25,10 +25,12 @@ class JooqLinkRepositoryTest extends IntegrationTest {
     private JooqLinkRepository linkRepository;
     @Autowired
     private JooqChatRepository chatRepository;
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jooq");
+        registry.add("app.database-access-type", () -> "jooq");
     }
+
     OffsetDateTime maxT = OffsetDateTime.of(2555, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
     OffsetDateTime minT = OffsetDateTime.of(1, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
 
@@ -39,6 +41,7 @@ class JooqLinkRepositoryTest extends IntegrationTest {
         LinkEntity actual = linkRepository.add("123");
         //then
         Assertions.assertEquals(linkRepository.getByLinkName("123").get(), actual);
+        Assertions.assertEquals(linkRepository.getByLinkName("123").get().getName(), "123");
 
     }
 

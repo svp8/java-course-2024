@@ -23,10 +23,12 @@ class JdbcAnswerRepositoryTest extends IntegrationTest {
     JdbcAnswerRepository jdbcAnswerRepository;
 
     OffsetDateTime offsetDateTime = OffsetDateTime.now();
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jdbc");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
+
     @Test
     @Transactional
     @Rollback

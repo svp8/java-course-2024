@@ -35,10 +35,12 @@ class JdbcLinkServiceTest extends IntegrationTest {
     private ChatRepository chatRepository;
     @Autowired
     private ChatLinkRepository chatLinkRepository;
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jdbc");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
+
     @Test
     @Transactional
     @Rollback

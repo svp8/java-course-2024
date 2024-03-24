@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface JpaLinkRepository extends JpaRepository<LinkEntity, Integer> {
     Optional<LinkEntity> findByName(String name);
 
-    List<LinkEntity> findByChats_Id(long chatId);
+    @SuppressWarnings("checkstyle:MethodName") List<LinkEntity> findByChats_Id(long chatId);
 
     @Query(value = "select * from link where EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_updated_at))>:seconds ",
            nativeQuery = true)

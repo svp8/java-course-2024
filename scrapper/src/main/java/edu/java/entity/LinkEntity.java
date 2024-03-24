@@ -1,5 +1,6 @@
 package edu.java.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -30,12 +31,21 @@ public class LinkEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "created_at")
     private OffsetDateTime createdAt;
+    @Column(name = "last_updated_at")
     private OffsetDateTime lastUpdatedAt;
 
     public LinkEntity(int id, String name, OffsetDateTime createdAt, OffsetDateTime lastUpdatedAt) {
         this.id = id;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.lastUpdatedAt = lastUpdatedAt;
+    }
+
+    public LinkEntity(String name, OffsetDateTime createdAt, OffsetDateTime lastUpdatedAt) {
         this.name = name;
         this.createdAt = createdAt;
         this.lastUpdatedAt = lastUpdatedAt;

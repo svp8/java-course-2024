@@ -46,9 +46,9 @@ class JpaPullServiceTest extends IntegrationTest {
             .chats(List.of(chat))
             .build();
         LinkEntity saved = linkRepository.save(linkEntity);
-        expected.add(jpaPullService.add(new PullEntity(1, "123", linkEntity.getId())));
-        expected.add(jpaPullService.add(new PullEntity(1, "123", linkEntity.getId())));
-        expected.add(jpaPullService.add(new PullEntity(1, "123", linkEntity.getId())));
+        expected.add(jpaPullService.add(new PullEntity(1, "123", saved.getId())));
+        expected.add(jpaPullService.add(new PullEntity(2, "123", saved.getId())));
+        expected.add(jpaPullService.add(new PullEntity(3, "123", saved.getId())));
 
         //when
         List<PullEntity> actual = jpaPullService.getAllByLinkId(saved.getId());

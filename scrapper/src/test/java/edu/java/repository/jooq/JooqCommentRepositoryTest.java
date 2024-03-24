@@ -22,10 +22,12 @@ class JooqCommentRepositoryTest extends IntegrationTest {
     @Autowired
     JooqCommentRepository jdbcCommentRepository;
     OffsetDateTime offsetDateTime = OffsetDateTime.now();
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jooq");
+        registry.add("app.database-access-type", () -> "jooq");
     }
+
     @Test
     @Transactional
     @Rollback

@@ -26,10 +26,12 @@ class JpaAnswerServiceTest extends IntegrationTest {
     @Autowired JpaLinkRepository linkRepository;
     @Autowired JpaChatRepository jpaChatRepository;
     @Autowired JpaAnswerRepository jpaAnswerRepository;
+
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jpa");
+        registry.add("app.database-access-type", () -> "jpa");
     }
+
     @Test
     @Transactional
     @Rollback
@@ -52,7 +54,6 @@ class JpaAnswerServiceTest extends IntegrationTest {
         //then
         Assertions.assertEquals(expected, actual);
     }
-
 
     @Test
     @Rollback

@@ -27,10 +27,12 @@ class JdbcLinkRepositoryTest extends IntegrationTest {
     private JdbcChatRepository chatRepository;
     OffsetDateTime maxT = OffsetDateTime.of(2555, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
     OffsetDateTime minT = OffsetDateTime.of(1, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jdbc");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
+
     @Test
     @Transactional
     @Rollback

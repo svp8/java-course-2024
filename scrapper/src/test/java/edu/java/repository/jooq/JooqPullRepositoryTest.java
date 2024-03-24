@@ -20,10 +20,12 @@ class JooqPullRepositoryTest extends IntegrationTest {
     JooqLinkRepository linkRepository;
     @Autowired
     JooqPullRepository pullRepository;
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", ()->"jooq");
+        registry.add("app.database-access-type", () -> "jooq");
     }
+
     @Test
     @Transactional
     @Rollback

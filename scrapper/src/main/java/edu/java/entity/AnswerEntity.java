@@ -26,6 +26,7 @@ public class AnswerEntity {
     private long id;
     @Column(name = "created_at")
     private OffsetDateTime creationDate;
+    @Column(name = "link_id")
     private int linkId;
 
     @Override public boolean equals(Object o) {
