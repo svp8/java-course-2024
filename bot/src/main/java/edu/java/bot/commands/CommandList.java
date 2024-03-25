@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 public class CommandList {
+
     private final List<Command> commandList;
+
     private final NoCommand noCommand;
 
     public CommandList(List<Command> commandList, NoCommand noCommand) {

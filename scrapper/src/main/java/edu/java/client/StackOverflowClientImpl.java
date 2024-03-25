@@ -1,7 +1,7 @@
 package edu.java.client;
 
 import edu.java.dto.stack.AnswerDto;
-import edu.java.dto.stack.BadgeDto;
+import edu.java.dto.stack.CommentDto;
 import edu.java.dto.stack.GeneralResponse;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,20 +25,20 @@ public class StackOverflowClientImpl implements StackOverflowClient {
             .get()
             .uri(String.format("/questions/%d/answers?%s", id, SITE_STACKOVERFLOW))
             .retrieve();
-        GeneralResponse<AnswerDto> questionResponse =
+        GeneralResponse<AnswerDto> response =
             responseSpec.bodyToMono(new ParameterizedTypeReference<GeneralResponse<AnswerDto>>() {
             }).block();
-        return questionResponse;
+        return response;
     }
 
     @Override
-    public GeneralResponse<BadgeDto> getAllBadges() {
+    public GeneralResponse<CommentDto> getCommentsByQuestionId(int id) {
         WebClient.ResponseSpec responseSpec = webClient
             .get()
-            .uri("/badges?" + SITE_STACKOVERFLOW)
+            .uri(String.format("/questions/%d/comments?%s", id, SITE_STACKOVERFLOW))
             .retrieve();
-        GeneralResponse<BadgeDto> response =
-            responseSpec.bodyToMono(new ParameterizedTypeReference<GeneralResponse<BadgeDto>>() {
+        GeneralResponse<CommentDto> response =
+            responseSpec.bodyToMono(new ParameterizedTypeReference<GeneralResponse<CommentDto>>() {
             }).block();
         return response;
     }

@@ -1,5 +1,6 @@
 package edu.java.configuration;
 
+import edu.java.client.BotClient;
 import edu.java.client.GitHubClient;
 import edu.java.client.GithubClientImpl;
 import edu.java.client.StackOverflowClient;
@@ -11,6 +12,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class ApplicationConfig {
+
+    @Bean
+    public BotClient scrapperClient(@Value("${client.bot.baseurl}") String baseUrl, WebClient.Builder builder) {
+        return new BotClient(baseUrl, builder);
+    }
+
     @Bean
     public GitHubClient gitHubClient(@Value("${client.github.baseurl}") String baseUrl, WebClient.Builder builder) {
         return new GithubClientImpl(baseUrl, builder);

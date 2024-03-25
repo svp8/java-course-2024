@@ -3,7 +3,6 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.CommandType;
 import java.util.Arrays;
@@ -27,7 +26,6 @@ class HelpCommandTest {
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(chat.id()).thenReturn(chatId);
         Mockito.when(update.message()).thenReturn(message);
-        Mockito.when(message.from()).thenReturn(new User(123L));
     }
 
     @Test
@@ -44,7 +42,7 @@ class HelpCommandTest {
                 .append("\n"));
         String expected = stringBuilder.toString();
         //when
-        command.execute(update);
+        command.execute(update, false);
 
         //then
         Mockito.verify(bot).sendMessage(chatId, expected);

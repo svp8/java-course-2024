@@ -14,15 +14,18 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void execute(Update update) {
-        StringBuilder stringBuilder = new StringBuilder();
-        Arrays.stream(CommandType.values())
-            .filter(commandType -> !commandType.equals(CommandType.NO))
-            .forEach((command) -> stringBuilder
-                .append(command.getName())
-                .append(" - ")
-                .append(command.getDescription())
-                .append("\n"));
-        getBot().sendMessage(update.message().chat().id(), stringBuilder.toString());
+    public void execute(Update update, boolean isInDialog) {
+        if (!isInDialog) {
+            StringBuilder stringBuilder = new StringBuilder();
+            Arrays.stream(CommandType.values())
+                .filter(commandType -> !commandType.equals(CommandType.NO))
+                .forEach((command) -> stringBuilder
+                    .append(command.getName())
+                    .append(" - ")
+                    .append(command.getDescription())
+                    .append("\n"));
+            getBot().sendMessage(update.message().chat().id(), stringBuilder.toString());
+        }
+
     }
 }

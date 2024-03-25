@@ -3,6 +3,7 @@ package edu.java.client;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.dto.github.BranchDto;
+import edu.java.dto.github.PullRequestDto;
 import edu.java.dto.github.RepositoryDto;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -24,10 +25,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 class GithubClientImplTest {
 
     public static WireMockServer wireMockServer = new WireMockServer();
+    private static GithubClientImpl githubClient;
 
     @BeforeAll
     static void init() {
         wireMockServer.start();
+        githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder());
     }
 
     @AfterAll
@@ -37,7 +40,6 @@ class GithubClientImplTest {
 
     @Test
     void fetchRepository() {
-        //given
         RepositoryDto expected =
             new RepositoryDto(1, "test", OffsetDateTime.of(2000, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC), "testLang", 3);
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -47,17 +49,15 @@ class GithubClientImplTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 .withJsonBody(node)));
-        GithubClientImpl githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder());
-//when
+
         RepositoryDto actual = githubClient.fetchRepository("java-course-2024", "svp8");
-//then
+
         verify(getRequestedFor(urlEqualTo("/repos/svp8/java-course-2024")));
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void fetchBranchList() {
-        //given
         List<BranchDto> expected = List.of(new BranchDto("test"), new BranchDto("test2"));
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         JsonNode node = mapper.valueToTree(expected);
@@ -67,10 +67,27 @@ class GithubClientImplTest {
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json;charset=UTF-8")
                 .withJsonBody(node)));
-        GithubClientImpl githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder());
-//when
         List<BranchDto> actual = githubClient.fetchBranchList("java-course-2024", "svp8");
-//then
+
+        verify(getRequestedFor(urlEqualTo(testUrl)));
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void fetchPRList() {
+        List<PullRequestDto> expected = List.of(new PullRequestDto(), new PullRequestDto());
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        JsonNode node = mapper.valueToTree(expected);
+        String testUrl = "/repos/svp8/java-course-2024/pulls";
+        stubFor(WireMock.get(urlEqualTo(testUrl))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json;charset=UTF-8")
+                .withJsonBody(node)));
+
+
+        List<PullRequestDto> actual = githubClient.fetchPullRequestList("java-course-2024", "svp8");
+
         verify(getRequestedFor(urlEqualTo(testUrl)));
         Assertions.assertEquals(expected, actual);
     }
