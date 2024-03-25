@@ -18,6 +18,7 @@ public class Bot extends TelegramBot implements AutoCloseable {
     public Bot(ApplicationConfig applicationConfig) {
         super(applicationConfig.telegramToken());
         registerCommands();
+
     }
 
     private void registerCommands() {

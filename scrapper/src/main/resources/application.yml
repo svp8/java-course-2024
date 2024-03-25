@@ -1,15 +1,24 @@
 app:
   scheduler:
     enable: true
-    interval: 10s
-    force-check-delay: 10s
+    interval: PT10S
+    force-check-delay: PT10S
 
 spring:
   application:
     name: scrapper
-
+client:
+  github:
+    baseurl: https://api.github.com
+  stack:
+    baseurl: https://api.stackexchange.com/2.3/
+  bot:
+    baseurl: http://localhost:8090
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 server:
-  port: 8080
+  port: 8081
 
 logging:
   config: classpath:log4j2-plain.xml
