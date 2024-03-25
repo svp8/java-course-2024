@@ -13,9 +13,9 @@ import edu.java.entity.AnswerEntity;
 import edu.java.entity.ChatEntity;
 import edu.java.entity.CommentEntity;
 import edu.java.entity.LinkEntity;
-import edu.java.repository.ChatLinkRepository;
-import edu.java.repository.stack.AnswerRepository;
-import edu.java.repository.stack.CommentRepository;
+import edu.java.service.AnswerService;
+import edu.java.service.ChatService;
+import edu.java.service.CommentService;
 import edu.java.service.LinkService;
 import edu.java.utils.LinkUtils;
 import java.util.ArrayList;
@@ -27,23 +27,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class StackUpdater implements Updater {
     private final StackOverflowClient stackOverflowClient;
-    private final CommentRepository commentRepository;
-    private final AnswerRepository answerRepository;
-    private final ChatLinkRepository chatLinkRepository;
+    private final CommentService commentService;
+    private final AnswerService answerService;
+    private final ChatService chatService;
     private final LinkService linkService;
     private final BotClient botClient;
 
     public StackUpdater(
         StackOverflowClient stackOverflowClient,
-        CommentRepository commentRepository,
-        AnswerRepository answerRepository,
-        ChatLinkRepository chatLinkRepository, LinkService linkService,
+        CommentService commentService, AnswerService answerService,
+        ChatService chatService, LinkService linkService,
         BotClient botClient
     ) {
         this.stackOverflowClient = stackOverflowClient;
-        this.commentRepository = commentRepository;
-        this.answerRepository = answerRepository;
-        this.chatLinkRepository = chatLinkRepository;
+        this.commentService = commentService;
+        this.answerService = answerService;
+        this.chatService = chatService;
         this.linkService = linkService;
         this.botClient = botClient;
     }
@@ -61,8 +60,8 @@ public class StackUpdater implements Updater {
             stackOverflowClient.getCommentsByQuestionId(id);
         List<CommentDto> commentDtoList = Arrays.asList(commentsByQuestionId.getItems());
         //get from db
-        List<AnswerEntity> answerEntityList = answerRepository.getAllByLinkId(linkEntity.getId());
-        List<CommentEntity> commentEntityList = commentRepository.getAllByLinkId(linkEntity.getId());
+        List<AnswerEntity> answerEntityList = answerService.getAllByLinkId(linkEntity.getId());
+        List<CommentEntity> commentEntityList = commentService.getAllByLinkId(linkEntity.getId());
 
         if (answerEntityList != null) {
             //delete from dtoList objects that already persisted
@@ -76,7 +75,7 @@ public class StackUpdater implements Updater {
                 .filter(x -> finalAnswerDtoList.stream().noneMatch(dto -> dto.getAnswerId() == x.getId())).toList();
 
             for (AnswerEntity answerEntity : answerEntityList) {
-                answerRepository.delete(answerEntity);
+                answerService.delete(answerEntity);
             }
 
         }
@@ -94,13 +93,13 @@ public class StackUpdater implements Updater {
                 .filter(x -> finalCommentDtoList.stream().noneMatch(dto -> dto.getCommentId() == x.getId())).toList();
 
             for (CommentEntity commentEntity : commentEntityList) {
-                commentRepository.delete(commentEntity);
+                commentService.delete(commentEntity);
             }
         }
         List<LinkUpdate> linkUpdates = new ArrayList<>();
         if (!answerDtoList.isEmpty()) {
             answerDtoList.forEach(x -> {
-                answerRepository.add(AnswerEntity.builder().linkId(linkEntity.getId())
+                answerService.add(AnswerEntity.builder().linkId(linkEntity.getId())
                     .creationDate(x.getCreationDate())
                     .id(x.getAnswerId())
                     .build());
@@ -109,7 +108,7 @@ public class StackUpdater implements Updater {
         }
         if (!commentDtoList.isEmpty()) {
             commentDtoList.forEach(x -> {
-                commentRepository.add(CommentEntity.builder().linkId(linkEntity.getId())
+                commentService.add(CommentEntity.builder().linkId(linkEntity.getId())
                     .creationDate(x.getCreationDate())
                     .id(x.getCommentId())
                     .build());
@@ -117,7 +116,7 @@ public class StackUpdater implements Updater {
             });
         }
         if (!linkUpdates.isEmpty()) {
-            List<ChatEntity> chats = chatLinkRepository.findChatsByLinkId(linkEntity.getId());
+            List<ChatEntity> chats = chatService.findChatsByLinkId(linkEntity.getId());
             Link link = linkService.update(linkEntity);
             //send to all chats update
             for (ChatEntity chat : chats) {
