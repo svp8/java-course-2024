@@ -1,0 +1,36 @@
+app:
+  scheduler:
+    enable: true
+    interval: PT10S
+    force-check-delay: PT10S
+
+spring:
+  liquibase:
+    enabled: false
+  application:
+    name: scrapper
+  codec:
+    max-in-memory-size: 500MB
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: root
+    driverClassName: org.postgresql.Driver
+
+client:
+  github:
+    baseurl: https://api.github.com
+  stack:
+    baseurl: https://api.stackexchange.com/2.3/
+  bot:
+    baseurl: http://localhost:8090
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+server:
+  port: 8081
+
+logging:
+  config: classpath:log4j2-plain.xml
+

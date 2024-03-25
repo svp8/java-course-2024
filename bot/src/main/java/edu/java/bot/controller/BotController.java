@@ -1,7 +1,7 @@
 package edu.java.bot.controller;
 
 import edu.java.bot.exception.SendMessageException;
-import edu.java.bot.model.request.UpdateRequest;
+import edu.java.bot.model.scrapper.Update;
 import edu.java.bot.service.UpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,8 +29,8 @@ public class BotController {
         @ApiResponse(responseCode = "400", description = "Invalid chat Id", content =
             {@Content(mediaType = "application/json", schema =
             @Schema(implementation = SendMessageException.class))})})
-    public ResponseEntity<Void> sendMessage(UpdateRequest updateRequest) {
-        updateService.sendUpdates(updateRequest);
+    public ResponseEntity<Void> sendMessage(@RequestBody Update updateRequest) {
+        updateService.sendUpdate(updateRequest);
         return ResponseEntity.ok().build();
     }
 

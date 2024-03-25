@@ -3,7 +3,7 @@ package edu.java.bot.service;
 import com.pengrad.telegrambot.response.SendResponse;
 import edu.java.bot.exception.SendMessageException;
 import edu.java.bot.model.Bot;
-import edu.java.bot.model.request.UpdateRequest;
+import edu.java.bot.model.Link;
 import edu.java.bot.model.scrapper.LinkUpdate;
 import edu.java.bot.model.scrapper.Update;
 import java.util.List;
@@ -17,23 +17,22 @@ public class UpdateService {
         this.bot = bot;
     }
 
-    public void sendUpdates(UpdateRequest updateRequest) {
-        for (Update update : updateRequest.updates()) {
-            List<LinkUpdate> linkUpdates = update.linkUpdates();
-            SendResponse sendResponse = bot.sendMessage(update.chatId(), formatUpdates(linkUpdates));
-            if (!sendResponse.isOk()) {
-                throw new SendMessageException(sendResponse.errorCode(), sendResponse.description());
-            }
+    public void sendUpdate(Update update) {
+        List<LinkUpdate> linkUpdates = update.linkUpdates();
+        SendResponse sendResponse =
+            bot.sendMessage(update.chat().id(), formatUpdates(update.link(), linkUpdates));
+        if (!sendResponse.isOk()) {
+            throw new SendMessageException(sendResponse.errorCode(), sendResponse.description());
         }
     }
 
-    public String formatUpdates(List<LinkUpdate> linkUpdates) {
+    public String formatUpdates(Link link, List<LinkUpdate> linkUpdates) {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(link.getUri().toString());
+        stringBuilder.append("\n");
         for (LinkUpdate linkUpdate : linkUpdates) {
-            stringBuilder.append(linkUpdate.link())
-                .append(" - ")
-                .append(linkUpdate.description());
-
+            stringBuilder
+                .append(linkUpdate.description()).append("\n");
         }
         return stringBuilder.toString();
     }

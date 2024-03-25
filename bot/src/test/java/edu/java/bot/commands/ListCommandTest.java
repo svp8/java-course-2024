@@ -3,6 +3,7 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import edu.java.bot.client.ScrapperClient;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.Link;
@@ -22,7 +23,7 @@ class ListCommandTest {
 
     @BeforeEach
     void init() {
-        scrapperClient = Mockito.mock(ScrapperClient.class);
+        scrapperClient=Mockito.mock(ScrapperClient.class);
         bot = Mockito.mock(Bot.class);
         update = Mockito.mock(Update.class);
         Message message = Mockito.mock(Message.class);
@@ -37,21 +38,24 @@ class ListCommandTest {
     void testLinks() throws URISyntaxException {
         //given
         List<Link> expected = List.of(new Link(new URI("http://github.com")), new Link(new URI("http://test.com")));
-        Mockito.when(scrapperClient.getLinkList(chatId)).thenReturn(new LinkListResponse(expected, 0));
+        Mockito.when(scrapperClient.getLinkList(chatId)).thenReturn(new LinkListResponse(expected,0));
         var command = new ListCommand(bot, scrapperClient);
-
+        String expectedString="""
+        1. http://github.com
+        2. http://test.com
+        """;
         //when
-        command.execute(update, false);
+        command.execute(update,false );
 
         //then
-        Mockito.verify(bot).sendMessage(chatId, expected.toString());
+        Mockito.verify(bot).sendMessage(chatId, expectedString);
     }
 
     @Test
     void testNoLinks() {
         //given
-        Mockito.when(scrapperClient.getLinkList(chatId)).thenReturn(new LinkListResponse(null, 0));
-        var command = new ListCommand(bot, scrapperClient);
+        Mockito.when(scrapperClient.getLinkList(chatId)).thenReturn(new LinkListResponse(null,0));
+        var command = new ListCommand( bot, scrapperClient);
 
         //when
         command.execute(update, false);

@@ -3,12 +3,14 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.CommandType;
-import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.Arrays;
 
 class HelpCommandTest {
     Bot bot;
@@ -27,7 +29,6 @@ class HelpCommandTest {
         Mockito.when(chat.id()).thenReturn(chatId);
         Mockito.when(update.message()).thenReturn(message);
     }
-
     @Test
     void testSendMessage() {
         //given
@@ -40,9 +41,9 @@ class HelpCommandTest {
                 .append(" - ")
                 .append(commandType.getDescription())
                 .append("\n"));
-        String expected = stringBuilder.toString();
+        String expected=stringBuilder.toString();
         //when
-        command.execute(update, false);
+        command.execute(update,false);
 
         //then
         Mockito.verify(bot).sendMessage(chatId, expected);
