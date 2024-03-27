@@ -23,21 +23,24 @@ public class ApplicationConfig {
             .withRenderQuotedNames(RenderQuotedNames.NEVER);
     }
 
-    @Bean
-    public BotClient scrapperClient(@Value("${client.bot.baseurl}") String baseUrl, WebClient.Builder builder) {
-        return new BotClient(baseUrl, builder);
-    }
-
-    @Bean
-    public GitHubClient gitHubClient(@Value("${client.github.baseurl}") String baseUrl, WebClient.Builder builder) {
-        return new GithubClientImpl(baseUrl, builder);
-    }
-
-    @Bean
-    public StackOverflowClient stackOverflowClient(
-        @Value("${client.stack.baseurl}") String baseUrl,
-        WebClient.Builder builder
-    ) {
-        return new StackOverflowClientImpl(baseUrl, builder);
-    }
+//    @Bean
+//    public BotClient botClient(@Value("${client.bot.baseurl}") String baseUrl,
+//        WebClient.Builder builder
+//
+//    ) {
+//        return new BotClient(baseUrl, builder);
+//    }
+//
+//    @Bean
+//    public GitHubClient gitHubClient(@Value("${client.github.baseurl}") String baseUrl, WebClient.Builder builder) {
+//        return new GithubClientImpl(baseUrl, builder);
+//    }
+//
+//    @Bean
+//    public StackOverflowClient stackOverflowClient(
+//        @Value("${client.stack.baseurl}") String baseUrl,
+//        WebClient.Builder builder
+//    ) {
+//        return new StackOverflowClientImpl(baseUrl, builder);
+//    }
 }

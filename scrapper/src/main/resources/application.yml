@@ -23,10 +23,25 @@ spring:
 client:
   github:
     baseurl: https://api.github.com
+    retry:
+      enable: true
+      type: linear
+      base-delay-ms: 100
+      retry-on-codes: [ 404,500 ]
   stack:
     baseurl: https://api.stackexchange.com/2.3/
+    retry:
+      enable: true
+      type: exponential
+      base-delay-ms: 100
+      retry-on-codes: [ 404 ]
   bot:
     baseurl: http://localhost:8090
+    retry:
+      enable: true
+      type: exponential
+      base-delay-ms: 100
+      retry-on-codes: [ 404,500 ]
 springdoc:
   swagger-ui:
     path: /swagger-ui

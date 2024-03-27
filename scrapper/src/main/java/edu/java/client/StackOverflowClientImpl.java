@@ -5,18 +5,22 @@ import edu.java.dto.stack.CommentDto;
 import edu.java.dto.stack.GeneralResponse;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 
 public class StackOverflowClientImpl implements StackOverflowClient {
     public static final String BASE_URL = "https://api.stackexchange.com/2.3/";
     public static final String SITE_STACKOVERFLOW = "site=stackoverflow";
     private final WebClient webClient;
+    private final Retry retry;
 
-    public StackOverflowClientImpl(String baseUrl, WebClient.Builder builder) {
+    public StackOverflowClientImpl(String baseUrl, WebClient.Builder builder, Retry retry) {
+        this.retry = retry;
         this.webClient = builder.baseUrl(ClientUtils.getBaseUrl(baseUrl, BASE_URL)).build();
     }
 
     public StackOverflowClientImpl(WebClient.Builder builder) {
         this.webClient = builder.baseUrl(BASE_URL).build();
+        this.retry = Retry.max(0);
     }
 
     @Override
@@ -27,7 +31,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
             .retrieve();
         GeneralResponse<AnswerDto> response =
             responseSpec.bodyToMono(new ParameterizedTypeReference<GeneralResponse<AnswerDto>>() {
-            }).block();
+            }).retryWhen(retry).block();
         return response;
     }
 
@@ -39,7 +43,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
             .retrieve();
         GeneralResponse<CommentDto> response =
             responseSpec.bodyToMono(new ParameterizedTypeReference<GeneralResponse<CommentDto>>() {
-            }).block();
+            }).retryWhen(retry).block();
         return response;
     }
 
