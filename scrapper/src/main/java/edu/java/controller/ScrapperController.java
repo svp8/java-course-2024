@@ -29,11 +29,12 @@ public class ScrapperController implements ScrapperControllerInterface {
     public static final String CHAT_ISN_T_REGISTERED = "Chat isn`t registered";
     private final LinkService linkService;
     private final ChatService chatService;
-    @Autowired LinkUpdaterScheduler scheduler;
+    private final  LinkUpdaterScheduler scheduler;
 
-    public ScrapperController(LinkService linkService, ChatService chatService) {
+    public ScrapperController(LinkService linkService, ChatService chatService, @Autowired(required = false) LinkUpdaterScheduler scheduler) {
         this.linkService = linkService;
         this.chatService = chatService;
+        this.scheduler = scheduler;
     }
 
     @Override
