@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(properties = "spring.profiles.active:cache")
 @AutoConfigureMockMvc
-class BotControllerTest {
+class BotControllerTest{
     private static final String REMOTE_ADDR = "127.0.0.1";
     @MockBean UpdateService updateService;
     @MockBean Bot bot;

@@ -3,6 +3,7 @@ package edu.java.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.java.dto.Link;
 import edu.java.dto.request.TrackLinkRequest;
+import edu.java.scrapper.IntegrationTest;
 import edu.java.service.LinkService;
 import java.util.Collections;
 import java.util.stream.IntStream;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(properties = "spring.profiles.active:cache")
 @AutoConfigureMockMvc
-public class ScrapperControllerTest {
+public class ScrapperControllerTest extends IntegrationTest {
     private static final String REMOTE_ADDR = "127.0.0.1";
     public static final String LINK = "123";
     @MockBean LinkService linkService;

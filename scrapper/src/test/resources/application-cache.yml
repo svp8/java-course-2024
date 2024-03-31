@@ -25,10 +25,6 @@ spring:
     driverClassName: org.postgresql.Driver
     hikari:
       maximum-pool-size: 2
-  jpa:
-    hibernate:
-      ddl-auto: none
-    database: postgresql
 
 bucket4j:
   enabled: true
