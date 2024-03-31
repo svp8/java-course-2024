@@ -26,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 import wiremock.com.fasterxml.jackson.databind.JsonNode;
 import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
 import wiremock.com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -52,8 +53,8 @@ class GitHubUpdaterTest extends IntegrationTest {
     private ChatRepository chatRepository;
 
     public static WireMockServer wireMockServer = new WireMockServer(9081);
-    private GithubClientImpl githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder());
-    private BotClient botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder());
+    private GithubClientImpl githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder(), Retry.max(100));
+    private BotClient botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(100));
     static String testUrlPull = "/repos/svp8/java-course-2024/pulls";
     static String testUrlBranch = "/repos/svp8/java-course-2024/branches";
     static String testUrlClient = "/send";

@@ -7,7 +7,6 @@ import edu.java.client.StackOverflowClient;
 import edu.java.client.StackOverflowClientImpl;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.util.Set;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.validation.annotation.Validated;
@@ -42,20 +41,7 @@ public record ClientConfig(@NotNull GitHub gitHub,
         return new StackOverflowClientImpl(stackOverflow.baseUrl, builder, retry);
     }
 
-    public record RetryConfig(
-        boolean enable,
-        RetryType type,
-        int maxAttempts, // default 100
-        int baseDelayMs, // default 1000 ms
-        Set<Integer> retryOnCodes // default any non 2xx
-    ) {
-    }
-
-    public enum RetryType {
-        constant, linear, exponential
-    }
-
-    public record GitHub(@NotEmpty String token, String baseUrl, RetryConfig retry) {
+    public record GitHub(String baseUrl, RetryConfig retry) {
     }
 
     public record StackOverflow(String baseUrl, RetryConfig retry) {

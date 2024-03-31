@@ -1,4 +1,4 @@
-package edu.java.configuration;
+package edu.java.bot.configuration;
 
 import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.NotNull;
@@ -120,3 +120,4 @@ public class RetryUtil {
     }
 
 }
+

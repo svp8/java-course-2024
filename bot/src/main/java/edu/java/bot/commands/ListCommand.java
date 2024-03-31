@@ -15,7 +15,7 @@ public class ListCommand extends Command {
     public static final String NO_LINKS = "0 links are being tracked ";
     private final ScrapperClient scrapperClient;
 
-    protected ListCommand(Bot bot, ScrapperClient scrapperClient) {
+    public ListCommand(Bot bot, ScrapperClient scrapperClient) {
         super(CommandType.LIST, bot);
         this.scrapperClient = scrapperClient;
     }

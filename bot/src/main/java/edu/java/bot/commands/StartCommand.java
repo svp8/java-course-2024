@@ -13,7 +13,7 @@ public class StartCommand extends Command {
     public static final String START_MESSAGE = "New user registered";
     private final ScrapperClient scrapperClient;
 
-    protected StartCommand(Bot bot, ScrapperClient scrapperClient) {
+    public StartCommand(Bot bot, ScrapperClient scrapperClient) {
         super(CommandType.START, bot);
         this.scrapperClient = scrapperClient;
     }

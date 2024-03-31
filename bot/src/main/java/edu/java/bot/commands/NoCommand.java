@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class NoCommand extends Command {
     private final String answer = "There is no such command";
 
-    protected NoCommand(Bot bot) {
+    public NoCommand(Bot bot) {
         super(CommandType.NO, bot);
     }
 
