@@ -1,6 +1,7 @@
 package edu.java.repository.jdbc;
 
 import edu.java.entity.LinkEntity;
+import edu.java.exception.NoSuchLinkException;
 import edu.java.mapper.LinkMapper;
 import edu.java.repository.LinkRepository;
 import java.time.Duration;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -61,12 +63,6 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<LinkEntity> findAllByChatId(long chatId) {
-        List<LinkEntity> links = chatLinkRepository.findLinksByChatId(chatId);
-        return links;
-    }
-
-    @Override
     public List<LinkEntity> findAllLastUpdated(Duration offset) {
         try {
             List<LinkEntity> links = jdbcTemplate.query(
@@ -81,9 +77,26 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public void remove(int id) {
-        jdbcTemplate.update(
+        int result = jdbcTemplate.update(
             "DELETE FROM link WHERE id = ?",
             id
         );
+        if (result == 0) {
+            throw new NoSuchLinkException(HttpStatus.NOT_FOUND.value(), "Link is not registered");
+        }
+    }
+
+    @Override
+    public List<LinkEntity> findLinksByChatId(long id) {
+        try {
+            List<LinkEntity> links = jdbcTemplate.query(
+                "select * from link INNER JOIN chat_link cl ON link.id = cl.link_id where cl.chat_id = ? ",
+                linkMapper,
+                id
+            );
+            return links;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 }

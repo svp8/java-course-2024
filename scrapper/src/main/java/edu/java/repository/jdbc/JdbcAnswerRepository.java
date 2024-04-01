@@ -64,11 +64,6 @@ public class JdbcAnswerRepository implements AnswerRepository {
     }
 
     @Override
-    public AnswerEntity update(AnswerEntity entity) {
-        return null;
-    }
-
-    @Override
     public AnswerEntity add(AnswerEntity entity) {
         jdbcTemplate.update(
             "INSERT INTO answer(id,created_at,link_id) values(?,?,?)",

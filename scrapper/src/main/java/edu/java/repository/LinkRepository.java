@@ -8,11 +8,11 @@ import java.util.Optional;
 public interface LinkRepository {
     LinkEntity add(String name);
 
+    List<LinkEntity> findLinksByChatId(long id);
+
     LinkEntity update(LinkEntity link);
 
     Optional<LinkEntity> getByLinkName(String name);
-
-    List<LinkEntity> findAllByChatId(long chatId);
 
     List<LinkEntity> findAllLastUpdated(Duration offset);
 

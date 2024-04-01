@@ -60,7 +60,7 @@ public class JdbcLinkService implements LinkService {
         } else {
             linkEntity = link.get();
         }
-        List<LinkEntity> linkList = linkRepository.findAllByChatId(chatId);
+        List<LinkEntity> linkList = linkRepository.findLinksByChatId(chatId);
         if (linkList.stream().anyMatch(l -> l.getName().equals(name))) {
             throw new DuplicateLinkException(
                 HttpStatus.BAD_REQUEST.value(),
@@ -85,13 +85,13 @@ public class JdbcLinkService implements LinkService {
         if (link.isEmpty()) {
             throw new NoSuchLinkException(HttpStatus.NOT_FOUND.value(), "Link is not created");
         } else {
-            List<LinkEntity> linkList = linkRepository.findAllByChatId(chatId);
+            List<LinkEntity> linkList = linkRepository.findLinksByChatId(chatId);
             //если к чату не привязана ссылка
             if (linkList == null || linkList.stream().noneMatch(l -> l.getName().equals(name))) {
                 throw new LinkNotTrackedException(HttpStatus.NOT_FOUND.value(), "Link is not tracked by this chat");
             }
             jdbcChatLinkRepository.remove(chatId, link.get().getId());
-            List<ChatEntity> chats = jdbcChatLinkRepository.findChatsByLinkId(link.get().getId());
+            List<ChatEntity> chats = jdbcChatRepository.findChatsByLinkId(link.get().getId());
             if (chats == null || chats.isEmpty()) {
                 //delete link and all connected
                 linkRepository.remove(link.get().getId());
@@ -109,7 +109,7 @@ public class JdbcLinkService implements LinkService {
     @Override
     public List<Link> getAllByChatId(long chatId) {
         checkChatIdInDb(chatId);
-        List<LinkEntity> allByChatId = linkRepository.findAllByChatId(chatId);
+        List<LinkEntity> allByChatId = linkRepository.findLinksByChatId(chatId);
         if (allByChatId == null) {
             return null;
         }

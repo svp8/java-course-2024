@@ -57,11 +57,6 @@ public class JdbcPullRepository implements PullRepository {
     }
 
     @Override
-    public PullEntity update(PullEntity entity) {
-        return null;
-    }
-
-    @Override
     public PullEntity add(PullEntity entity) {
         jdbcTemplate.update(
             "INSERT INTO pull_request(id,title,link_id) values(?,?,?)",

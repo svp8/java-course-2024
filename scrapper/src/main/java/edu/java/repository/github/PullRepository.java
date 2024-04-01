@@ -9,8 +9,6 @@ public interface PullRepository {
 
     List<PullEntity> getAllByLinkId(int linkId);
 
-    PullEntity update(PullEntity entity);
-
     PullEntity add(PullEntity entity);
 
     void delete(PullEntity entity);

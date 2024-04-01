@@ -64,11 +64,6 @@ public class JdbcCommentRepository implements CommentRepository {
     }
 
     @Override
-    public CommentEntity update(CommentEntity entity) {
-        return null;
-    }
-
-    @Override
     public CommentEntity add(CommentEntity entity) {
         jdbcTemplate.update(
             "INSERT INTO comment(id,creation_date,link_id) values(?,?,?)",

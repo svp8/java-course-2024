@@ -56,12 +56,6 @@ public class JdbcBranchRepository implements BranchRepository {
     }
 
     @Override
-    public BranchEntity update(BranchEntity entity) {
-
-        return null;
-    }
-
-    @Override
     public BranchEntity add(BranchEntity entity) {
         jdbcTemplate.update(
             "INSERT INTO branch(name,link_id) values(?,?)",
