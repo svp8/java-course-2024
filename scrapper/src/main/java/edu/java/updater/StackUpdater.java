@@ -17,6 +17,7 @@ import edu.java.service.AnswerService;
 import edu.java.service.ChatService;
 import edu.java.service.CommentService;
 import edu.java.service.LinkService;
+import edu.java.service.MessageService;
 import edu.java.utils.LinkUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,20 +32,20 @@ public class StackUpdater implements Updater {
     private final AnswerService answerService;
     private final ChatService chatService;
     private final LinkService linkService;
-    private final BotClient botClient;
+    private final MessageService messageService;
 
     public StackUpdater(
         StackOverflowClient stackOverflowClient,
         CommentService commentService, AnswerService answerService,
         ChatService chatService, LinkService linkService,
-        BotClient botClient
+        MessageService messageService
     ) {
         this.stackOverflowClient = stackOverflowClient;
         this.commentService = commentService;
         this.answerService = answerService;
         this.chatService = chatService;
         this.linkService = linkService;
-        this.botClient = botClient;
+        this.messageService = messageService;
     }
 
     @Override
@@ -121,7 +122,7 @@ public class StackUpdater implements Updater {
             //send to all chats update
             for (ChatEntity chat : chats) {
                 Update update = new Update(new Chat(chat.getId()), link, linkUpdates);
-                botClient.sendUpdate(update);
+                messageService.sendUpdate(update);
             }
         }
     }

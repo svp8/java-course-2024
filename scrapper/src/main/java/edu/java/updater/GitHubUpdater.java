@@ -16,6 +16,7 @@ import edu.java.entity.PullEntity;
 import edu.java.service.BranchService;
 import edu.java.service.ChatService;
 import edu.java.service.LinkService;
+import edu.java.service.MessageService;
 import edu.java.service.PullService;
 import edu.java.utils.LinkUtils;
 import java.util.ArrayList;
@@ -33,19 +34,19 @@ public class GitHubUpdater implements Updater {
     private final BranchService branchService;
     private final PullService pullService;
     private final ChatService chatService;
-    private final BotClient botClient;
+    private final MessageService messageService;
     private final LinkService linkService;
 
     public GitHubUpdater(
-        GitHubClient gitHubClient, PullService pullService,
-        BranchService branchService, ChatService chatService,
-        BotClient botClient, LinkService linkService
+            GitHubClient gitHubClient, PullService pullService,
+            BranchService branchService, ChatService chatService,
+        MessageService messageService, LinkService linkService
     ) {
         this.gitHubClient = gitHubClient;
         this.branchService = branchService;
         this.pullService = pullService;
         this.chatService = chatService;
-        this.botClient = botClient;
+        this.messageService = messageService;
         this.linkService = linkService;
     }
 
@@ -115,7 +116,7 @@ public class GitHubUpdater implements Updater {
             //send to all chats update
             for (ChatEntity chat : chats) {
                 Update update = new Update(new Chat(chat.getId()), link, linkUpdates);
-                botClient.sendUpdate(update);
+                messageService.sendUpdate(update);
             }
         }
     }

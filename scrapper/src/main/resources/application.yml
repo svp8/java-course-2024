@@ -4,6 +4,11 @@ app:
     interval: PT10S
     force-check-delay: PT10S
   database-access-type: jooq
+  useQueue: true
+  kafka:
+    topic: 123
+    partitions: 10
+    replicas: 1
 
 spring:
   cache:
