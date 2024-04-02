@@ -6,11 +6,18 @@ app:
   database-access-type: jooq
   useQueue: true
   kafka:
-    topic: 123
+    topic: update
     partitions: 10
     replicas: 1
 
 spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      retries: 0
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   cache:
     cache-names:
       - rate-limit-buckets

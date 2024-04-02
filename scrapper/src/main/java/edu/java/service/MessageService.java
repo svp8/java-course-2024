@@ -7,12 +7,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+
 public class MessageService {
     private final ScrapperQueueProducer scrapperQueueProducer;
     private final BotClient botClient;
-    @Value("app.useQueue")
+    @Value("${app.useQueue}")
     private Boolean useQueue;
+
+    public MessageService(ScrapperQueueProducer scrapperQueueProducer, BotClient botClient) {
+        this.scrapperQueueProducer = scrapperQueueProducer;
+        this.botClient = botClient;
+    }
 
     public void sendUpdate(Update update) {
         if (useQueue) {

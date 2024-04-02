@@ -10,9 +10,9 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaConfiguration {
     @Value("${app.kafka.topic}")
     private String topic;
-    @Value("${app.kafka.topic}")
+    @Value("${app.kafka.replicas}")
     private Integer replicas;
-    @Value("${app.kafka.topic}")
+    @Value("${app.kafka.partitions}")
     private Integer partitions;
 
     @Bean
