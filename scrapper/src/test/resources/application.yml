@@ -4,7 +4,19 @@ app:
     interval: PT10S
     force-check-delay: PT10S
   database-access-type: jdbc
+  useQueue: true
+  kafka:
+    topic: update
+    partitions: 10
+    replicas: 1
 spring:
+  kafka:
+    bootstrap-servers: localhost:8054
+    producer:
+      retries: 0
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 #  cache:
 #    type: none
   liquibase:
