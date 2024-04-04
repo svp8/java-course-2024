@@ -7,7 +7,7 @@ app:
   useQueue: true
   kafka:
     topic: update
-    partitions: 10
+    partitions: 1
     replicas: 1
 spring:
   kafka:

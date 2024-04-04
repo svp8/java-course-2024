@@ -9,6 +9,8 @@ spring:
   kafka:
     bootstrap-servers: localhost:29092
     consumer:
+      properties:
+        spring.json.trusted.packages: "*"
       group-id: 1
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

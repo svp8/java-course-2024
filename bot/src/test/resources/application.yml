@@ -1,9 +1,25 @@
 app:
   telegram-token: ${TELEGRAMTOKEN}
+  kafka:
+    topic: update
 springdoc:
   swagger-ui:
     path: /swagger-ui
 spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      properties:
+        spring.json.trusted.packages: "*"
+      group-id: 1
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      retries: 0
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   cache:
     cache-names:
       - rate-limit-buckets

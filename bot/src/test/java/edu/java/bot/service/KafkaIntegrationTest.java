@@ -1,4 +1,4 @@
-package edu.java.service;
+package edu.java.bot.service;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
