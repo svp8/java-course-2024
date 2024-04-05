@@ -1,11 +1,13 @@
 app:
   scheduler:
-    enable: false
-    interval: PT10S
+    enable: true
+    interval: PT1000S
+    delay: PT5S
     force-check-delay: PT10S
-  database-access-type: jooq
+  database-access-type: jpa
   useQueue: true
   kafka:
+    enabled: true
     topic: update
     partitions: 10
     replicas: 1

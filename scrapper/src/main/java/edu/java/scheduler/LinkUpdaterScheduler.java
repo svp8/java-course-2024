@@ -29,7 +29,7 @@ public class LinkUpdaterScheduler {
         LinkService linkService,
         GitHubUpdater gitHubUpdater,
         StackUpdater stackUpdater,
-        @Value("${app.scheduler.interval}") Duration interval
+        @Value("${app.scheduler.delay}") Duration interval
     ) {
         this.linkService = linkService;
         this.gitHubUpdater = gitHubUpdater;

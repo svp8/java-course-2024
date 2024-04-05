@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.profiles.active:kafka")
 class ScrapperQueueProducerTest extends KafkaIntegrationTest {
     @Autowired
     MessageService messageService;

@@ -6,19 +6,18 @@ app:
   database-access-type: jdbc
   useQueue: true
   kafka:
-    enabled: false
+    enabled: true
     topic: update
     partitions: 1
     replicas: 1
 spring:
-
-#  kafka:
-#    bootstrap-servers: localhost:8054
-#    producer:
-#      retries: 0
-#      acks: all
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  kafka:
+    bootstrap-servers: localhost:8054
+    producer:
+      retries: 0
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 #  cache:
 #    type: none
   liquibase:
