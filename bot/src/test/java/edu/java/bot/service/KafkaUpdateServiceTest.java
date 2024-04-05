@@ -29,7 +29,7 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest
+@SpringBootTest(properties =  "spring.profiles.active:kafka")
 public class KafkaUpdateServiceTest extends KafkaIntegrationTest {
     @Autowired KafkaTemplate<String, Update> kafkaTemplate;
     @Autowired KafkaUpdateService updateService;

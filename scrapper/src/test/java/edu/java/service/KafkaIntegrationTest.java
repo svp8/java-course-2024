@@ -1,5 +1,6 @@
 package edu.java.service;
 
+import edu.java.scrapper.IntegrationTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.KafkaContainer;
@@ -7,7 +8,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-public abstract class KafkaIntegrationTest {
+public abstract class KafkaIntegrationTest  extends IntegrationTest {
     public static KafkaContainer kafka;
 
     static {
