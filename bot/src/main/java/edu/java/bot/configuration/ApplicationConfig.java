@@ -11,5 +11,6 @@ public record ApplicationConfig(
     String telegramToken,
     Kafka kafka
 ) {
-    record Kafka(String topic){}
+    record Kafka(String topic) {
+    }
 }

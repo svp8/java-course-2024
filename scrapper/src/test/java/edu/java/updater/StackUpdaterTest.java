@@ -68,7 +68,7 @@ class StackUpdaterTest extends IntegrationTest {
     private ChatRepository chatRepository;
 
     public static WireMockServer wireMockServer = new WireMockServer(9081);
-    private static BotClient botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(10000));
+    private static BotClient botClient ;
     static MessageService messageService;
     static String testUriComment = String.format("/questions/57626072/comments?%s", SITE_STACKOVERFLOW);
     static String testUriAnswer = String.format("/questions/57626072/answers?%s", SITE_STACKOVERFLOW);
@@ -78,7 +78,7 @@ class StackUpdaterTest extends IntegrationTest {
     @BeforeAll
     static void init() {
         wireMockServer.start();
-
+        botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(10000));
         AnswerDto[] expectedDto =
             new AnswerDto[] {new AnswerDto(1, true, offsetDateTime, 12, offsetDateTime),
                 new AnswerDto(2, true, offsetDateTime, 12, offsetDateTime)};

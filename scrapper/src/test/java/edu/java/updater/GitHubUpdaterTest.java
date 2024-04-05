@@ -54,8 +54,8 @@ class GitHubUpdaterTest extends IntegrationTest {
     private ChatRepository chatRepository;
 
     public static WireMockServer wireMockServer = new WireMockServer(9081);
-    private GithubClientImpl githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder(), Retry.max(100));
-    private static BotClient botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(100));
+    private static  GithubClientImpl githubClient;
+    private static BotClient botClient ;
     static MessageService messageService;
     static String testUrlPull = "/repos/svp8/java-course-2024/pulls";
     static String testUrlBranch = "/repos/svp8/java-course-2024/branches";
@@ -64,7 +64,8 @@ class GitHubUpdaterTest extends IntegrationTest {
     @BeforeAll
     static void init() {
         wireMockServer.start();
-
+        githubClient=new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder(), Retry.max(100));
+        botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(100));
         List<BranchDto> expected = List.of(new BranchDto("test"), new BranchDto("test2"));
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         JsonNode node = mapper.valueToTree(expected);

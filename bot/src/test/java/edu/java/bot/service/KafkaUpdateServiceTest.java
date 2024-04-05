@@ -57,7 +57,9 @@ public class KafkaUpdateServiceTest extends KafkaIntegrationTest {
         Mockito.when(bot.sendMessage(1, UpdateService.formatUpdates(update.link(), update.linkUpdates())))
             .thenReturn(sendResponse);
         Mockito.when(sendResponse.isOk()).thenReturn(true);
+        //when
         kafkaTemplate.send("update", update);
+        //then
         await()
             .pollInterval(Duration.ofSeconds(3))
             .atMost(12, SECONDS)
@@ -77,7 +79,9 @@ public class KafkaUpdateServiceTest extends KafkaIntegrationTest {
         Mockito.when(sendResponse.isOk()).thenReturn(false);
         Mockito.when(sendResponse.description()).thenReturn("error");
         Mockito.when(sendResponse.errorCode()).thenReturn(123);
+        //when
         kafkaTemplate.send("update", update);
+        //then
         try(KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(getConsumerProps())){
             kafkaConsumer.subscribe(List.of(dlq));
             Unreliables.retryUntilTrue(10, TimeUnit.SECONDS, () -> {

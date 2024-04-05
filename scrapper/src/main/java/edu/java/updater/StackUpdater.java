@@ -1,6 +1,5 @@
 package edu.java.updater;
 
-import edu.java.client.BotClient;
 import edu.java.client.StackOverflowClient;
 import edu.java.dto.Chat;
 import edu.java.dto.Link;

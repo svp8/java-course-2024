@@ -1,6 +1,5 @@
 package edu.java.updater;
 
-import edu.java.client.BotClient;
 import edu.java.client.GitHubClient;
 import edu.java.dto.Chat;
 import edu.java.dto.Link;
@@ -38,8 +37,8 @@ public class GitHubUpdater implements Updater {
     private final LinkService linkService;
 
     public GitHubUpdater(
-            GitHubClient gitHubClient, PullService pullService,
-            BranchService branchService, ChatService chatService,
+        GitHubClient gitHubClient, PullService pullService,
+        BranchService branchService, ChatService chatService,
         MessageService messageService, LinkService linkService
     ) {
         this.gitHubClient = gitHubClient;
