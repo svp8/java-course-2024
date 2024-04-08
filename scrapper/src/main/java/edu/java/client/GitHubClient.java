@@ -11,4 +11,5 @@ public interface GitHubClient {
     List<BranchDto> fetchBranchList(String repositoryName, String owner);
 
     List<PullRequestDto> fetchPullRequestList(String repositoryName, String owner);
+
 }

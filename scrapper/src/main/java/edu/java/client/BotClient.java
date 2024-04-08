@@ -1,6 +1,6 @@
 package edu.java.client;
 
-import edu.java.dto.request.UpdateRequest;
+import edu.java.dto.Update;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -16,11 +16,11 @@ public class BotClient {
         this.webClient = builder.baseUrl(BASE_URL).build();
     }
 
-    public void sendUpdate(UpdateRequest updateRequest) {
+    public void sendUpdate(Update update) {
         WebClient.ResponseSpec responseSpec = webClient
             .post()
             .uri("/send")
-            .body(Mono.just(updateRequest), UpdateRequest.class)
+            .body(Mono.just(update), Update.class)
             .retrieve();
         responseSpec.toBodilessEntity().block();
     }

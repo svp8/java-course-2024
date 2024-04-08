@@ -39,12 +39,15 @@ class ListCommandTest {
         List<Link> expected = List.of(new Link(new URI("http://github.com")), new Link(new URI("http://test.com")));
         Mockito.when(scrapperClient.getLinkList(chatId)).thenReturn(new LinkListResponse(expected, 0));
         var command = new ListCommand(bot, scrapperClient);
-
+        String expectedString="""
+        1. http://github.com
+        2. http://test.com
+        """;
         //when
         command.execute(update, false);
 
         //then
-        Mockito.verify(bot).sendMessage(chatId, expected.toString());
+        Mockito.verify(bot).sendMessage(chatId, expectedString);
     }
 
     @Test

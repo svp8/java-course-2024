@@ -1,12 +1,21 @@
 app:
   scheduler:
-    enable: true
+    enable: false
     interval: PT10S
     force-check-delay: PT10S
 
 spring:
   application:
     name: scrapper
+  codec:
+    max-in-memory-size: 500MB
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: root
+    driverClassName: org.postgresql.Driver
+
 client:
   github:
     baseurl: https://api.github.com
@@ -22,3 +31,4 @@ server:
 
 logging:
   config: classpath:log4j2-plain.xml
+

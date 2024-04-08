@@ -10,13 +10,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class GithubClientImpl implements GitHubClient {
     public static final String BASE_URL = "https://api.github.com";
     private final WebClient webClient;
+    private final String baseUrl;
 
     public GithubClientImpl(String baseUrl, WebClient.Builder builder) {
         this.webClient = builder.baseUrl(ClientUtils.getBaseUrl(baseUrl, BASE_URL)).build();
+        this.baseUrl = baseUrl;
     }
 
     public GithubClientImpl(WebClient.Builder builder) {
         this.webClient = builder.baseUrl(BASE_URL).build();
+        this.baseUrl = BASE_URL;
     }
 
     @Override
@@ -50,4 +53,5 @@ public class GithubClientImpl implements GitHubClient {
         }).block();
         return list;
     }
+
 }

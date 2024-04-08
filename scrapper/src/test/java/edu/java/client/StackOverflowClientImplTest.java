@@ -11,6 +11,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import wiremock.com.fasterxml.jackson.databind.JsonNode;
 import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,16 +26,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static edu.java.client.StackOverflowClientImpl.SITE_STACKOVERFLOW;
 
 class StackOverflowClientImplTest {
-    public static WireMockServer wireMockServer=new WireMockServer();
+    public static WireMockServer wireMockServer = new WireMockServer();
     OffsetDateTime offsetDateTime = OffsetDateTime.of(2000, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
-    static StackOverflowClientImpl stackOverflowClient;
+    StackOverflowClientImpl stackOverflowClient =
+        new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
 
     @BeforeAll
     static void init() {
         wireMockServer.start();
-        System.out.println(wireMockServer.baseUrl());
-        stackOverflowClient = new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
-
     }
 
     @AfterAll
@@ -42,10 +42,12 @@ class StackOverflowClientImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void getAnswersByQuestionId() {
-
         AnswerDto[] expectedDto =
-            new AnswerDto[] {new AnswerDto(1, true, 12, offsetDateTime), new AnswerDto(2, true, 12, offsetDateTime)};
+            new AnswerDto[] {new AnswerDto(1, true, offsetDateTime, 12, offsetDateTime),
+                new AnswerDto(2, true, offsetDateTime, 12, offsetDateTime)};
         GeneralResponse<AnswerDto> expected = new GeneralResponse<>();
         expected.setItems(expectedDto);
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -66,6 +68,8 @@ class StackOverflowClientImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void getAllComments() {
         CommentDto[] expectedDto = new CommentDto[] {new CommentDto(1, 1, "213", "21", true, offsetDateTime),
             new CommentDto(2, 1, "213", "21", true, offsetDateTime)};

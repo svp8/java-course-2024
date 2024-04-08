@@ -7,14 +7,16 @@ import edu.java.exception.DuplicateLinkException;
 import edu.java.exception.InvalidChatIdException;
 import edu.java.exception.NoSuchLinkException;
 import edu.java.exception.URIException;
+import edu.java.scheduler.LinkUpdaterScheduler;
+import edu.java.service.ChatService;
 import edu.java.service.LinkService;
-import edu.java.service.LinkServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,10 +26,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ScrapperController implements ScrapperControllerInterface {
+    public static final String CHAT_ISN_T_REGISTERED = "Chat isn`t registered";
     private final LinkService linkService;
+    private final ChatService chatService;
+    private final LinkUpdaterScheduler scheduler;
 
-    public ScrapperController(LinkService linkService) {
+    public ScrapperController(
+        LinkService linkService,
+        ChatService chatService,
+        @Autowired(required = false) LinkUpdaterScheduler scheduler
+    ) {
         this.linkService = linkService;
+        this.chatService = chatService;
+        this.scheduler = scheduler;
     }
 
     @Override
@@ -36,7 +47,7 @@ public class ScrapperController implements ScrapperControllerInterface {
                description = "This method tracks link for chatId")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "ok"),
-        @ApiResponse(responseCode = "404", description = LinkServiceImpl.CHAT_ISN_T_REGISTERED, content =
+        @ApiResponse(responseCode = "404", description = CHAT_ISN_T_REGISTERED, content =
             {
                 @Content(mediaType = "application/json", schema =
                 @Schema(implementation = InvalidChatIdException.class))
@@ -60,13 +71,18 @@ public class ScrapperController implements ScrapperControllerInterface {
         return ResponseEntity.ok(link);
     }
 
+    @GetMapping("/update")
+    public void update() {
+        scheduler.update();
+    }
+
     @Override
     @PostMapping("/untrack")
     @Operation(summary = "Untrack link",
                description = "This method untracks link for chatId")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "ok"),
-        @ApiResponse(responseCode = "404", description = LinkServiceImpl.CHAT_ISN_T_REGISTERED, content =
+        @ApiResponse(responseCode = "404", description = CHAT_ISN_T_REGISTERED, content =
             {
                 @Content(mediaType = "application/json", schema =
                 @Schema(implementation = InvalidChatIdException.class))
@@ -90,7 +106,7 @@ public class ScrapperController implements ScrapperControllerInterface {
                description = "This method sends list of links of chatId")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "ok"),
-        @ApiResponse(responseCode = "404", description = LinkServiceImpl.CHAT_ISN_T_REGISTERED, content =
+        @ApiResponse(responseCode = "404", description = CHAT_ISN_T_REGISTERED, content =
             {
                 @Content(mediaType = "application/json", schema =
                 @Schema(implementation = InvalidChatIdException.class))
@@ -116,7 +132,7 @@ public class ScrapperController implements ScrapperControllerInterface {
         )
     })
     public ResponseEntity<Void> start(@PathVariable("id") long chatId) {
-        linkService.registerChatId(chatId);
+        chatService.registerChat(chatId);
         return ResponseEntity.ok().build();
     }
 }
