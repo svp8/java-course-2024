@@ -15,7 +15,7 @@ public class KafkaUpdateService {
         this.updateService = updateService;
     }
 
-    @KafkaListener(topics = "${app.kafka.topic}")
+    @KafkaListener(topics = "${app.kafka.topic}", autoStartup = "${app.kafka.enabled:false}")
     public void sendUpdate(Update update) {
         try {
             updateService.sendUpdate(update);

@@ -1,11 +1,11 @@
 app:
   scheduler:
-    enable: true
+    enable: false
     interval: PT1000S
     delay: PT5S
     force-check-delay: PT10S
   database-access-type: jpa
-  useQueue: true
+  useQueue: false
   kafka:
     enabled: true
     topic: update
@@ -40,6 +40,22 @@ spring:
       ddl-auto: none
     database: postgresql
 
+management:
+  export:
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    web:
+      exposure.include: health,info,prometheus
+      base-path: /
+      path-mapping:
+        health: health
+        prometheus: metrics
+  server:
+    port: 8031
 bucket4j:
   enabled: true
   filters:
