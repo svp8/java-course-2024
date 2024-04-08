@@ -9,8 +9,6 @@ public interface CommentRepository {
 
     List<CommentEntity> getAllByLinkId(int linkId);
 
-    CommentEntity update(CommentEntity entity);
-
     CommentEntity add(CommentEntity entity);
 
     void delete(CommentEntity entity);
