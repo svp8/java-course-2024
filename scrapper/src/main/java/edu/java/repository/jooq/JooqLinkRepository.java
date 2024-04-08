@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import static org.jooq.impl.DSL.currentTimestamp;
 import static org.jooq.impl.DSL.extract;
+import static scrapper.domain.jooq.Tables.CHAT_LINK;
 import static scrapper.domain.jooq.Tables.LINK;
 
 @Repository
@@ -38,6 +39,17 @@ public class JooqLinkRepository implements LinkRepository {
     }
 
     @Override
+    public List<LinkEntity> findLinksByChatId(long id) {
+        return dsl.select(LINK)
+            .from(LINK
+                .join(CHAT_LINK)
+                .on(LINK.ID.eq(CHAT_LINK.LINK_ID))
+            )
+            .where(CHAT_LINK.CHAT_ID.eq(id))
+            .fetchInto(LinkEntity.class);
+    }
+
+    @Override
     public LinkEntity update(LinkEntity link) {
 
         return dsl.update(LINK)
@@ -56,12 +68,6 @@ public class JooqLinkRepository implements LinkRepository {
             return Optional.empty();
         }
         return Optional.of(linkEntity);
-    }
-
-    @Override
-    public List<LinkEntity> findAllByChatId(long chatId) {
-        List<LinkEntity> links = chatLinkRepository.findLinksByChatId(chatId);
-        return links;
     }
 
     @Override

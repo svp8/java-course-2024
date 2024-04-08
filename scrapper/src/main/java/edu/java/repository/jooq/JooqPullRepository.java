@@ -38,11 +38,6 @@ public class JooqPullRepository implements PullRepository {
     }
 
     @Override
-    public PullEntity update(PullEntity entity) {
-        return null;
-    }
-
-    @Override
     public PullEntity add(PullEntity entity) {
         return dsl.insertInto(PULL_REQUEST, PULL_REQUEST.ID, PULL_REQUEST.TITLE, PULL_REQUEST.LINK_ID)
             .values(

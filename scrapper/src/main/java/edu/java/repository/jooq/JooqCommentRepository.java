@@ -39,11 +39,6 @@ public class JooqCommentRepository implements CommentRepository {
     }
 
     @Override
-    public CommentEntity update(CommentEntity entity) {
-        return null;
-    }
-
-    @Override
     public CommentEntity add(CommentEntity entity) {
         return dsl.insertInto(COMMENT, COMMENT.ID, COMMENT.CREATION_DATE, COMMENT.LINK_ID)
             .values(

@@ -39,11 +39,6 @@ public class JooqAnswerRepository implements AnswerRepository {
     }
 
     @Override
-    public AnswerEntity update(AnswerEntity entity) {
-        return null;
-    }
-
-    @Override
     public AnswerEntity add(AnswerEntity entity) {
         return dsl.insertInto(ANSWER, ANSWER.ID, ANSWER.CREATED_AT, ANSWER.LINK_ID)
             .values(

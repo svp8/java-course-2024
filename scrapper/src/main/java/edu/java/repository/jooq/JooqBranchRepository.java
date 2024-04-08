@@ -41,11 +41,6 @@ public class JooqBranchRepository implements BranchRepository {
     }
 
     @Override
-    public BranchEntity update(BranchEntity entity) {
-        return null;
-    }
-
-    @Override
     public BranchEntity add(BranchEntity entity) {
         return dsl.insertInto(BRANCH, BRANCH.NAME, BRANCH.LINK_ID)
             .values(

@@ -6,11 +6,10 @@ import edu.java.exception.DuplicateLinkException;
 import edu.java.exception.InvalidChatIdException;
 import edu.java.exception.InvalidLinkFormatException;
 import edu.java.exception.NoSuchLinkException;
-import edu.java.repository.ChatLinkRepository;
-import edu.java.repository.ChatRepository;
-import edu.java.repository.LinkRepository;
+import edu.java.repository.jooq.JooqChatLinkRepository;
+import edu.java.repository.jooq.JooqChatRepository;
+import edu.java.repository.jooq.JooqLinkRepository;
 import edu.java.scrapper.IntegrationTest;
-import edu.java.service.LinkService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,13 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 class JooqLinkServiceTest extends IntegrationTest {
     public static final String URL = "https://stackoverflow.com/questions/30315448/java-jooq-insert-query-isnt-working";
     @Autowired
-    LinkService linkService;
+    JooqLinkService linkService;
     @Autowired
-    private LinkRepository linkRepository;
+    private JooqLinkRepository linkRepository;
     @Autowired
-    private ChatRepository chatRepository;
+    private JooqChatRepository chatRepository;
     @Autowired
-    private ChatLinkRepository chatLinkRepository;
+    private JooqChatLinkRepository chatLinkRepository;
 
     @Test
     @Transactional
@@ -42,7 +40,7 @@ class JooqLinkServiceTest extends IntegrationTest {
         //when
         linkService.track("https://stackoverflow.com/questions/30315448/java-jooq-insert-query-isnt-working", 123);
         //then
-        List<LinkEntity> allByChatId = linkRepository.findAllByChatId(123);
+        List<LinkEntity> allByChatId = linkRepository.findLinksByChatId(123);
         Assertions.assertEquals(1, allByChatId.size());
     }
 
@@ -79,7 +77,7 @@ class JooqLinkServiceTest extends IntegrationTest {
     @DisplayName("Should throw if chat already registered")
     void registerChatIdDuplicate() {
         chatRepository.createChat(100);
-        Assertions.assertThrows(DuplicateKeyException.class, () -> chatRepository.createChat(100));
+        Assertions.assertThrows(InvalidChatIdException.class, () -> chatRepository.createChat(100));
     }
 
     @Test
@@ -92,7 +90,7 @@ class JooqLinkServiceTest extends IntegrationTest {
         //when
         linkService.untrack(url, 123);
         //then
-        List<LinkEntity> allByChatId = linkRepository.findAllByChatId(123);
+        List<LinkEntity> allByChatId = linkRepository.findLinksByChatId(123);
         Assertions.assertTrue(allByChatId.isEmpty());
     }
 

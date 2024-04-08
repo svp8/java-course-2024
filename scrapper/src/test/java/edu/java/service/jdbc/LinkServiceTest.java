@@ -1,4 +1,4 @@
-package edu.java.service;
+package edu.java.service.jdbc;
 
 import edu.java.dto.Link;
 import edu.java.entity.LinkEntity;
@@ -6,11 +6,10 @@ import edu.java.exception.DuplicateLinkException;
 import edu.java.exception.InvalidChatIdException;
 import edu.java.exception.InvalidLinkFormatException;
 import edu.java.exception.NoSuchLinkException;
-import edu.java.repository.ChatLinkRepository;
-import edu.java.repository.ChatRepository;
-import edu.java.repository.LinkRepository;
+import edu.java.repository.jdbc.JdbcChatLinkRepository;
+import edu.java.repository.jdbc.JdbcChatRepository;
+import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.scrapper.IntegrationTest;
-import edu.java.service.LinkService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -18,21 +17,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class JooqLinkServiceTest extends IntegrationTest {
+class LinkServiceTest extends IntegrationTest {
     public static final String URL = "https://stackoverflow.com/questions/30315448/java-jooq-insert-query-isnt-working";
     @Autowired
-    LinkService linkService;
+    JdbcLinkService linkService;
     @Autowired
-    private LinkRepository linkRepository;
+    private JdbcLinkRepository linkRepository;
     @Autowired
-    private ChatRepository chatRepository;
+    private JdbcChatRepository chatRepository;
     @Autowired
-    private ChatLinkRepository chatLinkRepository;
+    private JdbcChatLinkRepository chatLinkRepository;
 
     @Test
     @Transactional
