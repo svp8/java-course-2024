@@ -4,11 +4,7 @@ import edu.java.entity.BranchEntity;
 import edu.java.repository.jooq.JooqBranchRepository;
 import edu.java.service.BranchService;
 import java.util.List;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
 
-@Service
-@Primary
 public class JooqBranchService implements BranchService {
     private final JooqBranchRepository branchRepository;
 

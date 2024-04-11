@@ -4,11 +4,7 @@ import edu.java.entity.ChatEntity;
 import edu.java.repository.jooq.JooqChatRepository;
 import edu.java.service.ChatService;
 import java.util.List;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
 
-@Service
-@Primary
 public class JooqChatService implements ChatService {
     private final JooqChatRepository chatRepository;
 

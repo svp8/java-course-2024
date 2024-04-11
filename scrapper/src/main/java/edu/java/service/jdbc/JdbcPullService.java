@@ -4,9 +4,7 @@ import edu.java.entity.PullEntity;
 import edu.java.repository.jdbc.JdbcPullRepository;
 import edu.java.service.PullService;
 import java.util.List;
-import org.springframework.stereotype.Service;
 
-@Service
 public class JdbcPullService implements PullService {
     private final JdbcPullRepository pullRepository;
 

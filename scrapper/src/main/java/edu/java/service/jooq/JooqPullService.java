@@ -4,11 +4,7 @@ import edu.java.entity.PullEntity;
 import edu.java.repository.jooq.JooqPullRepository;
 import edu.java.service.PullService;
 import java.util.List;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
 
-@Service
-@Primary
 public class JooqPullService implements PullService {
     private final JooqPullRepository pullRepository;
 
