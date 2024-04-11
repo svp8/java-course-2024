@@ -1,4 +1,4 @@
-package edu.java.service.jooq;
+package edu.java.service.jdbc;
 
 import edu.java.dto.Link;
 import edu.java.entity.LinkEntity;
@@ -6,9 +6,9 @@ import edu.java.exception.DuplicateLinkException;
 import edu.java.exception.InvalidChatIdException;
 import edu.java.exception.InvalidLinkFormatException;
 import edu.java.exception.NoSuchLinkException;
-import edu.java.repository.jooq.JooqChatLinkRepository;
-import edu.java.repository.jooq.JooqChatRepository;
-import edu.java.repository.jooq.JooqLinkRepository;
+import edu.java.repository.jdbc.JdbcChatLinkRepository;
+import edu.java.repository.jdbc.JdbcChatRepository;
+import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.util.List;
 import java.util.Optional;
@@ -21,16 +21,16 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class JooqLinkServiceTest extends IntegrationTest {
+class LinkServiceTest extends IntegrationTest {
     public static final String URL = "https://stackoverflow.com/questions/30315448/java-jooq-insert-query-isnt-working";
     @Autowired
-    JooqLinkService linkService;
+    JdbcLinkService linkService;
     @Autowired
-    private JooqLinkRepository linkRepository;
+    private JdbcLinkRepository linkRepository;
     @Autowired
-    private JooqChatRepository chatRepository;
+    private JdbcChatRepository chatRepository;
     @Autowired
-    private JooqChatLinkRepository chatLinkRepository;
+    private JdbcChatLinkRepository chatLinkRepository;
 
     @Test
     @Transactional

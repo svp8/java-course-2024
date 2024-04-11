@@ -9,7 +9,9 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class JdbcBranchRepository implements BranchRepository {
     private final JdbcTemplate jdbcTemplate;
 
@@ -51,12 +53,6 @@ public class JdbcBranchRepository implements BranchRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-    }
-
-    @Override
-    public BranchEntity update(BranchEntity entity) {
-
-        return null;
     }
 
     @Override

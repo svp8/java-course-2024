@@ -4,7 +4,9 @@ import edu.java.entity.BranchEntity;
 import edu.java.repository.jdbc.JdbcBranchRepository;
 import edu.java.service.BranchService;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
+@Service
 public class JdbcBranchService implements BranchService {
     private final JdbcBranchRepository branchRepository;
 

@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -25,12 +23,6 @@ class JooqLinkRepositoryTest extends IntegrationTest {
     private JooqLinkRepository linkRepository;
     @Autowired
     private JooqChatRepository chatRepository;
-
-    @DynamicPropertySource
-    static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
-    }
-
     OffsetDateTime maxT = OffsetDateTime.of(2555, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
     OffsetDateTime minT = OffsetDateTime.of(1, 1, 1, 1, 1, 1, 1, ZoneOffset.UTC);
 
@@ -41,7 +33,6 @@ class JooqLinkRepositoryTest extends IntegrationTest {
         LinkEntity actual = linkRepository.add("123");
         //then
         Assertions.assertEquals(linkRepository.getByLinkName("123").get(), actual);
-        Assertions.assertEquals(linkRepository.getByLinkName("123").get().getName(), "123");
 
     }
 

@@ -8,13 +8,15 @@ import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.DatePart;
-import org.jooq.Record1;
-import org.jooq.Result;
-import scrapper.domain.jooq.tables.records.LinkRecord;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 import static org.jooq.impl.DSL.currentTimestamp;
 import static org.jooq.impl.DSL.extract;
+import static scrapper.domain.jooq.Tables.CHAT_LINK;
 import static scrapper.domain.jooq.Tables.LINK;
 
+@Repository
+@Primary
 public class JooqLinkRepository implements LinkRepository {
     private final JooqChatLinkRepository chatLinkRepository;
     private final DSLContext dsl;
@@ -37,6 +39,17 @@ public class JooqLinkRepository implements LinkRepository {
     }
 
     @Override
+    public List<LinkEntity> findLinksByChatId(long id) {
+        return dsl.select(LINK)
+            .from(LINK
+                .join(CHAT_LINK)
+                .on(LINK.ID.eq(CHAT_LINK.LINK_ID))
+            )
+            .where(CHAT_LINK.CHAT_ID.eq(id))
+            .fetchInto(LinkEntity.class);
+    }
+
+    @Override
     public LinkEntity update(LinkEntity link) {
 
         return dsl.update(LINK)
@@ -48,9 +61,6 @@ public class JooqLinkRepository implements LinkRepository {
 
     @Override
     public Optional<LinkEntity> getByLinkName(String name) {
-        Result<Record1<LinkRecord>> fetch = dsl.select(LINK)
-            .from(LINK)
-            .where(LINK.NAME.eq(name)).fetch();
         LinkEntity linkEntity = dsl.select(LINK)
             .from(LINK)
             .where(LINK.NAME.eq(name)).fetchOneInto(LinkEntity.class);
@@ -58,12 +68,6 @@ public class JooqLinkRepository implements LinkRepository {
             return Optional.empty();
         }
         return Optional.of(linkEntity);
-    }
-
-    @Override
-    public List<LinkEntity> findAllByChatId(long chatId) {
-        List<LinkEntity> links = chatLinkRepository.findLinksByChatId(chatId);
-        return links;
     }
 
     @Override

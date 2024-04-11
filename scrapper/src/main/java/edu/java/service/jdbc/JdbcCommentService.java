@@ -4,7 +4,9 @@ import edu.java.entity.CommentEntity;
 import edu.java.repository.jdbc.JdbcCommentRepository;
 import edu.java.service.CommentService;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
+@Service
 public class JdbcCommentService implements CommentService {
     private final JdbcCommentRepository commentRepository;
 
