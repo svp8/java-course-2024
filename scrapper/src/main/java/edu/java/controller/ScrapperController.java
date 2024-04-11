@@ -10,6 +10,7 @@ import edu.java.exception.URIException;
 import edu.java.scheduler.LinkUpdaterScheduler;
 import edu.java.service.ChatService;
 import edu.java.service.LinkService;
+import io.micrometer.core.annotation.Counted;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -61,12 +62,14 @@ public class ScrapperController implements ScrapperControllerInterface {
             }
         ),
     })
+    @Counted(value = "message_count")
     public ResponseEntity<Link> track(@RequestBody TrackLinkRequest request) {
         Link link = linkService.track(request.getLink(), request.getChatId());
         return ResponseEntity.ok(link);
     }
 
     @GetMapping("/update")
+    @Counted(value = "message_count")
     public void update() {
         scheduler.update();
     }
@@ -90,6 +93,7 @@ public class ScrapperController implements ScrapperControllerInterface {
             }
         )
     })
+    @Counted(value = "message_count")
     public ResponseEntity<Void> untrack(@RequestBody TrackLinkRequest request) {
         linkService.untrack(request.getLink(), request.getChatId());
         return ResponseEntity.ok().build();
@@ -108,6 +112,7 @@ public class ScrapperController implements ScrapperControllerInterface {
             }
         )
     })
+    @Counted(value = "message_count")
     public ResponseEntity<LinkListResponse> list(@PathVariable("id") long chatId) {
         List<Link> links = linkService.getAllByChatId(chatId);
         return ResponseEntity.ok(new LinkListResponse(links, links.size()));
@@ -126,6 +131,7 @@ public class ScrapperController implements ScrapperControllerInterface {
             }
         )
     })
+    @Counted(value = "message_count")
     public ResponseEntity<Void> start(@PathVariable("id") long chatId) {
         chatService.registerChat(chatId);
         return ResponseEntity.ok().build();

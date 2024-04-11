@@ -36,6 +36,24 @@ client:
       retry-on-codes: [ 404,500 ]
 server:
   port: 8090
+
+management:
+  export:
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    web:
+      exposure.include: health,info,prometheus
+      base-path: /
+      path-mapping:
+        health: health
+        prometheus: metrics
+  server:
+    port: 8030
+
 bucket4j:
   enabled: true
   filters:
