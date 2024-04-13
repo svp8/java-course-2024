@@ -4,11 +4,7 @@ import edu.java.entity.CommentEntity;
 import edu.java.repository.jooq.JooqCommentRepository;
 import edu.java.service.CommentService;
 import java.util.List;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
 
-@Service
-@Primary
 public class JooqCommentService implements CommentService {
     private final JooqCommentRepository commentRepository;
 

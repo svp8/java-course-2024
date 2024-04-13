@@ -26,15 +26,10 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     public ChatEntity createChat(long id) {
-        try {
-            jdbcTemplate.update(
-                "INSERT INTO chat(id,created_at) values(?,?)",
-                id, OffsetDateTime.now()
-            );
-        } catch (Exception e) {
-            throw new InvalidChatIdException(HttpStatus.BAD_REQUEST.value(), "Chat is already registered");
-        }
-
+        jdbcTemplate.update(
+            "INSERT INTO chat(id,created_at) values(?,?)",
+            id, OffsetDateTime.now()
+        );
         return getChatById(id).get();
     }
 

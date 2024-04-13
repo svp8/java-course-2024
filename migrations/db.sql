@@ -15,7 +15,7 @@ CREATE TABLE chat_link
 (
     chat_id bigint REFERENCES chat (id),
     link_id int REFERENCES link (id),
-    CONSTRAINT chay_link_pkey PRIMARY KEY (chat_id, link_id)
+    CONSTRAINT chat_link_pkey PRIMARY KEY (chat_id, link_id)
 );
 -- CREATE TABLE repository (
 -- 	id int8 NOT NULL,

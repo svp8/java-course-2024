@@ -1,25 +1,25 @@
-package edu.java.service.jooq;
+package edu.java.service.jpa;
 
 import edu.java.entity.BranchEntity;
-import edu.java.repository.jooq.JooqBranchRepository;
+import edu.java.repository.jpa.JpaBranchRepository;
 import edu.java.service.BranchService;
 import java.util.List;
 
-public class JooqBranchService implements BranchService {
-    private final JooqBranchRepository branchRepository;
+public class JpaBranchService implements BranchService {
+    private final JpaBranchRepository branchRepository;
 
-    public JooqBranchService(JooqBranchRepository branchRepository) {
+    public JpaBranchService(JpaBranchRepository branchRepository) {
         this.branchRepository = branchRepository;
     }
 
     @Override
     public List<BranchEntity> getAllByLinkId(int linkId) {
-        return branchRepository.getAllByLinkId(linkId);
+        return branchRepository.findAllByLinkId(linkId);
     }
 
     @Override
     public BranchEntity add(BranchEntity entity) {
-        return branchRepository.add(entity);
+        return branchRepository.save(entity);
     }
 
     @Override

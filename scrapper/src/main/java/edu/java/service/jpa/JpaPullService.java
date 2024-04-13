@@ -1,25 +1,25 @@
-package edu.java.service.jdbc;
+package edu.java.service.jpa;
 
 import edu.java.entity.PullEntity;
-import edu.java.repository.jdbc.JdbcPullRepository;
+import edu.java.repository.jpa.JpaPullRepository;
 import edu.java.service.PullService;
 import java.util.List;
 
-public class JdbcPullService implements PullService {
-    private final JdbcPullRepository pullRepository;
+public class JpaPullService implements PullService {
+    private final JpaPullRepository pullRepository;
 
-    public JdbcPullService(JdbcPullRepository pullRepository) {
+    public JpaPullService(JpaPullRepository pullRepository) {
         this.pullRepository = pullRepository;
     }
 
     @Override
     public List<PullEntity> getAllByLinkId(int linkId) {
-        return pullRepository.getAllByLinkId(linkId);
+        return pullRepository.findAllByLinkId(linkId);
     }
 
     @Override
     public PullEntity add(PullEntity entity) {
-        return pullRepository.add(entity);
+        return pullRepository.save(entity);
     }
 
     @Override

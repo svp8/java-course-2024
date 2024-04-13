@@ -20,13 +20,9 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Primary
 public class JooqLinkService implements LinkService {
     public static final String CHAT_ISN_T_REGISTERED = "Chat isn`t registered";
     private final JooqLinkRepository linkRepository;

@@ -1,25 +1,25 @@
-package edu.java.service.jdbc;
+package edu.java.service.jpa;
 
 import edu.java.entity.CommentEntity;
-import edu.java.repository.jdbc.JdbcCommentRepository;
+import edu.java.repository.jpa.JpaCommentRepository;
 import edu.java.service.CommentService;
 import java.util.List;
 
-public class JdbcCommentService implements CommentService {
-    private final JdbcCommentRepository commentRepository;
+public class JpaCommentService implements CommentService {
+    private final JpaCommentRepository commentRepository;
 
-    public JdbcCommentService(JdbcCommentRepository commentRepository) {
+    public JpaCommentService(JpaCommentRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
 
     @Override
     public List<CommentEntity> getAllByLinkId(int linkId) {
-        return commentRepository.getAllByLinkId(linkId);
+        return commentRepository.findAllByLinkId(linkId);
     }
 
     @Override
     public CommentEntity add(CommentEntity entity) {
-        return commentRepository.add(entity);
+        return commentRepository.save(entity);
     }
 
     @Override

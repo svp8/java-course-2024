@@ -4,9 +4,7 @@ import edu.java.entity.AnswerEntity;
 import edu.java.repository.jdbc.JdbcAnswerRepository;
 import edu.java.service.AnswerService;
 import java.util.List;
-import org.springframework.stereotype.Service;
 
-@Service
 public class JdbcAnswerService implements AnswerService {
     private final JdbcAnswerRepository answerRepository;
 

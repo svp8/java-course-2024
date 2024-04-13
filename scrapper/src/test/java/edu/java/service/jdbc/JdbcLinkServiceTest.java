@@ -1,4 +1,4 @@
-package edu.java.service.jooq;
+package edu.java.service.jdbc;
 
 import edu.java.dto.Link;
 import edu.java.entity.LinkEntity;
@@ -6,10 +6,11 @@ import edu.java.exception.DuplicateLinkException;
 import edu.java.exception.InvalidChatIdException;
 import edu.java.exception.InvalidLinkFormatException;
 import edu.java.exception.NoSuchLinkException;
-import edu.java.repository.jooq.JooqChatLinkRepository;
-import edu.java.repository.jooq.JooqChatRepository;
-import edu.java.repository.jooq.JooqLinkRepository;
+import edu.java.repository.ChatLinkRepository;
+import edu.java.repository.ChatRepository;
+import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationTest;
+import edu.java.service.LinkService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -17,29 +18,28 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class JooqLinkServiceTest extends IntegrationTest {
+class JdbcLinkServiceTest extends IntegrationTest {
     public static final String URL = "https://stackoverflow.com/questions/30315448/java-jooq-insert-query-isnt-working";
     @Autowired
-    JooqLinkService linkService;
+    LinkService linkService;
     @Autowired
-    private JooqLinkRepository linkRepository;
+    private LinkRepository linkRepository;
     @Autowired
-    private JooqChatRepository chatRepository;
+    private ChatRepository chatRepository;
     @Autowired
-    private JooqChatLinkRepository chatLinkRepository;
+    private ChatLinkRepository chatLinkRepository;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
-
-
 
     @Test
     @Transactional
@@ -80,14 +80,6 @@ class JooqLinkServiceTest extends IntegrationTest {
         Assertions.assertThrows(InvalidLinkFormatException.class, () -> linkService.track("test dsfds sdfdwsew", 100));
     }
 
-    @Test
-    @Transactional
-    @Rollback
-    @DisplayName("Should throw if chat already registered")
-    void registerChatIdDuplicate() {
-        chatRepository.createChat(100);
-        Assertions.assertThrows(InvalidChatIdException.class, () -> chatRepository.createChat(100));
-    }
 
     @Test
     @Transactional

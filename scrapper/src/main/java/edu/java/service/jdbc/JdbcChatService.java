@@ -1,13 +1,13 @@
 package edu.java.service.jdbc;
 
 import edu.java.entity.ChatEntity;
+import edu.java.exception.InvalidChatIdException;
 import edu.java.repository.jdbc.JdbcChatLinkRepository;
 import edu.java.repository.jdbc.JdbcChatRepository;
 import edu.java.service.ChatService;
 import java.util.List;
-import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
 
-@Service
 public class JdbcChatService implements ChatService {
     private final JdbcChatRepository chatRepository;
     private final JdbcChatLinkRepository chatLinkRepository;
@@ -19,7 +19,11 @@ public class JdbcChatService implements ChatService {
 
     @Override
     public void registerChat(long chatId) {
-        chatRepository.createChat(chatId);
+        try {
+            chatRepository.createChat(chatId);
+        } catch (Exception e) {
+            throw new InvalidChatIdException(HttpStatus.BAD_REQUEST.value(), "Chat is already registered");
+        }
     }
 
     @Override
