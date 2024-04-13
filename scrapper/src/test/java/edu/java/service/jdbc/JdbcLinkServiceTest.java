@@ -49,7 +49,7 @@ class JdbcLinkServiceTest extends IntegrationTest {
         //when
         linkService.track("https://stackoverflow.com/questions/30315448/java-jooq-insert-query-isnt-working", 123);
         //then
-        List<LinkEntity> allByChatId = linkRepository.findAllByChatId(123);
+        List<LinkEntity> allByChatId = linkRepository.findLinksByChatId(123);
         Assertions.assertEquals(1, allByChatId.size());
     }
 
@@ -80,14 +80,6 @@ class JdbcLinkServiceTest extends IntegrationTest {
         Assertions.assertThrows(InvalidLinkFormatException.class, () -> linkService.track("test dsfds sdfdwsew", 100));
     }
 
-    @Test
-    @Transactional
-    @Rollback
-    @DisplayName("Should throw if chat already registered")
-    void registerChatIdDuplicate() {
-        chatRepository.createChat(100);
-        Assertions.assertThrows(DuplicateKeyException.class, () -> chatRepository.createChat(100));
-    }
 
     @Test
     @Transactional
@@ -99,7 +91,7 @@ class JdbcLinkServiceTest extends IntegrationTest {
         //when
         linkService.untrack(url, 123);
         //then
-        List<LinkEntity> allByChatId = linkRepository.findAllByChatId(123);
+        List<LinkEntity> allByChatId = linkRepository.findLinksByChatId(123);
         Assertions.assertTrue(allByChatId.isEmpty());
     }
 

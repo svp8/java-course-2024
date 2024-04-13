@@ -6,9 +6,9 @@ import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.CommandType;
 import edu.java.bot.model.Link;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -22,7 +22,7 @@ public class UntrackCommand extends Command {
     public UntrackCommand(Bot bot, ScrapperClient scrapperClient) {
         super(CommandType.UNTRACK, bot);
         this.scrapperClient = scrapperClient;
-        this.linksByChat = new HashMap<>();
+        this.linksByChat = new ConcurrentHashMap<>();
     }
 
     /**
@@ -59,6 +59,7 @@ public class UntrackCommand extends Command {
         } else {
             if (isNumeric(update.message().text())) {
                 int number = Integer.parseInt(update.message().text());
+                //get links of chatId
                 List<Link> links = linksByChat.get(chatId);
                 if (number > 0 && number <= links.size()) {
                     try {
@@ -74,6 +75,7 @@ public class UntrackCommand extends Command {
             } else {
                 super.getBot().sendMessage(chatId, WRONG_INPUT_FORMAT);
             }
+            //after end of dialog remove chat and all its links from memory
             linksByChat.remove(chatId);
         }
     }

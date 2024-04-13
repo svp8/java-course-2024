@@ -16,12 +16,12 @@ import edu.java.service.LinkService;
 import edu.java.utils.LinkUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 public class JooqLinkService implements LinkService {
     public static final String CHAT_ISN_T_REGISTERED = "Chat isn`t registered";
@@ -40,7 +40,7 @@ public class JooqLinkService implements LinkService {
     }
 
     @Override
-
+    @Transactional
     public Link track(String name, long chatId) {
         checkChatIdInDb(chatId);
         if (name.startsWith("https://github.com")) {
@@ -58,7 +58,7 @@ public class JooqLinkService implements LinkService {
         } else {
             linkEntity = link.get();
         }
-        List<LinkEntity> linkList = linkRepository.findAllByChatId(chatId);
+        List<LinkEntity> linkList = linkRepository.findLinksByChatId(chatId);
         if (linkList.stream().anyMatch(l -> l.getName().equals(name))) {
             throw new DuplicateLinkException(
                 HttpStatus.BAD_REQUEST.value(),
@@ -76,20 +76,20 @@ public class JooqLinkService implements LinkService {
     }
 
     @Override
-
+    @Transactional
     public void untrack(String name, long chatId) {
         checkChatIdInDb(chatId);
         Optional<LinkEntity> link = linkRepository.getByLinkName(name);
         if (link.isEmpty()) {
             throw new NoSuchLinkException(HttpStatus.NOT_FOUND.value(), "Link is not created");
         } else {
-            List<LinkEntity> linkList = linkRepository.findAllByChatId(chatId);
+            List<LinkEntity> linkList = linkRepository.findLinksByChatId(chatId);
             //если к чату не привязана ссылка
             if (linkList == null || linkList.stream().noneMatch(l -> l.getName().equals(name))) {
                 throw new LinkNotTrackedException(HttpStatus.NOT_FOUND.value(), "Link is not tracked by this chat");
             }
             chatLinkRepository.remove(chatId, link.get().getId());
-            List<ChatEntity> chats = chatLinkRepository.findChatsByLinkId(link.get().getId());
+            List<ChatEntity> chats = chatRepository.findChatsByLinkId(link.get().getId());
             if (chats == null || chats.isEmpty()) {
                 //delete link and all connected
                 linkRepository.remove(link.get().getId());
@@ -107,7 +107,7 @@ public class JooqLinkService implements LinkService {
     @Override
     public List<Link> getAllByChatId(long chatId) {
         checkChatIdInDb(chatId);
-        List<LinkEntity> allByChatId = linkRepository.findAllByChatId(chatId);
+        List<LinkEntity> allByChatId = linkRepository.findLinksByChatId(chatId);
         if (allByChatId == null) {
             return null;
         }
@@ -133,10 +133,5 @@ public class JooqLinkService implements LinkService {
             OffsetDateTime.now()
         ));
         return link;
-    }
-
-    @Override
-    public List<LinkEntity> findAllLastUpdated(Duration interval) {
-        return linkRepository.findAllLastUpdated(interval);
     }
 }

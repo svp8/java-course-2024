@@ -14,13 +14,9 @@ public class ScrapperClient {
     private final WebClient webClient;
     private final Retry retry;
 
-    public ScrapperClient(String baseUrl, WebClient.Builder builder, Retry retry) {
+    public ScrapperClient(String baseUrl, WebClient.Builder builder) {
+        this.webClient = builder.baseUrl(ClientUtils.getBaseUrl(baseUrl, BASE_URL)).build();
         this.retry = retry;
-        if (baseUrl == null || baseUrl.isBlank()) {
-            this.webClient = builder.baseUrl(BASE_URL).build();
-        } else {
-            this.webClient = WebClient.create(baseUrl);
-        }
     }
 
     public ScrapperClient(WebClient.Builder builder) {
