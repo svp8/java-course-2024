@@ -1,4 +1,4 @@
 FROM openjdk:21
 VOLUME /tmp
-COPY target/scrapper-0.0.1-SNAPSHOT.jar app.jar
+COPY target/scrapper.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
