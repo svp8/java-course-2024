@@ -6,8 +6,9 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.commands.Command;
 import edu.java.bot.commands.CommandList;
 import edu.java.bot.model.Bot;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class BotUpdateListener implements UpdatesListener {
     private final static Logger LOGGER = LogManager.getLogger();
     private final CommandList commandList;
-    private final HashMap<Long, Command> chatState = new HashMap<>();
+    private final Map<Long, Command> chatState = new ConcurrentHashMap<>();
     private final Bot bot;
 
     public BotUpdateListener(CommandList commandList, Bot bot) {
@@ -25,6 +26,12 @@ public class BotUpdateListener implements UpdatesListener {
         bot.setUpdatesListener(this);
     }
 
+    /**
+     * processes commands and text if in dialog
+     *
+     * @param list list with updates
+     * @return result of update
+     */
     @Override
     public int process(List<Update> list) {
 

@@ -43,8 +43,8 @@ public class JdbcAccessConfiguration {
     }
 
     @Bean
-    public JdbcChatRepository jdbcChatRepository(DataSource dataSource) {
-        return new JdbcChatRepository(dataSource);
+    public JdbcChatRepository jdbcChatRepository(DataSource dataSource, ChatMapper chatMapper) {
+        return new JdbcChatRepository(dataSource, chatMapper);
     }
 
     @Bean

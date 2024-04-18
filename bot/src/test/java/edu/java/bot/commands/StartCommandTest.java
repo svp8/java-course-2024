@@ -3,7 +3,6 @@ package edu.java.bot.commands;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
 import edu.java.bot.client.ScrapperClient;
 import edu.java.bot.exception.ScrapperException;
 import edu.java.bot.model.Bot;

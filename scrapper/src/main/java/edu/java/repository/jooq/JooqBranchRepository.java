@@ -5,8 +5,12 @@ import edu.java.repository.github.BranchRepository;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 import static scrapper.domain.jooq.Tables.BRANCH;
 
+@Repository
+@Primary
 public class JooqBranchRepository implements BranchRepository {
     private final DSLContext dsl;
 
@@ -34,11 +38,6 @@ public class JooqBranchRepository implements BranchRepository {
             .from(BRANCH)
             .where(BRANCH.LINK_ID.eq(linkId))
             .fetchInto(BranchEntity.class);
-    }
-
-    @Override
-    public BranchEntity update(BranchEntity entity) {
-        return null;
     }
 
     @Override

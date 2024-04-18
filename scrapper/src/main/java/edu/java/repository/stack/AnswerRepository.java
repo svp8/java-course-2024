@@ -9,8 +9,6 @@ public interface AnswerRepository {
 
     List<AnswerEntity> getAllByLinkId(int linkId);
 
-    AnswerEntity update(AnswerEntity entity);
-
     AnswerEntity add(AnswerEntity entity);
 
     void delete(AnswerEntity entity);

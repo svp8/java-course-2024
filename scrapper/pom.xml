@@ -55,7 +55,7 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.3.0</version>
         </dependency>
-        <!--        database-->
+        <!-- Database -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
@@ -69,12 +69,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jooq</artifactId>
         </dependency>
-
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.2</version>
+            <scope>runtime</scope>
         </dependency>
         <!--        rate limiting    -->
         <dependency>
@@ -100,7 +98,6 @@
             <artifactId>jcache</artifactId>
             <version>3.1.5</version>
         </dependency>
-
         <!-- Kafka -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>

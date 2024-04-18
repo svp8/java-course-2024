@@ -12,7 +12,9 @@ import java.util.Optional;
 import javax.sql.DataSource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class JdbcCommentRepository implements CommentRepository {
     private final JdbcTemplate jdbcTemplate;
 
@@ -59,11 +61,6 @@ public class JdbcCommentRepository implements CommentRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-    }
-
-    @Override
-    public CommentEntity update(CommentEntity entity) {
-        return null;
     }
 
     @Override

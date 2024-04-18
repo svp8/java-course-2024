@@ -5,8 +5,12 @@ import edu.java.repository.stack.AnswerRepository;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 import static scrapper.domain.jooq.Tables.ANSWER;
 
+@Repository
+@Primary
 public class JooqAnswerRepository implements AnswerRepository {
     private final DSLContext dsl;
 
@@ -32,11 +36,6 @@ public class JooqAnswerRepository implements AnswerRepository {
             .from(ANSWER)
             .where(ANSWER.LINK_ID.eq(linkId))
             .fetchInto(AnswerEntity.class);
-    }
-
-    @Override
-    public AnswerEntity update(AnswerEntity entity) {
-        return null;
     }
 
     @Override

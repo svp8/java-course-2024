@@ -76,8 +76,8 @@ public class JooqAccessConfiguration {
     }
 
     @Bean
-    public JooqChatService jooqChatService(JooqChatRepository repository, JooqChatLinkRepository chatLinkRepository) {
-        return new JooqChatService(repository, chatLinkRepository);
+    public JooqChatService jooqChatService(JooqChatRepository repository) {
+        return new JooqChatService(repository);
     }
 
     @Bean

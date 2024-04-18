@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class Link {
     private URI uri;
-//    private long chatId;
 
     @Override public String toString() {
         return "Link{"

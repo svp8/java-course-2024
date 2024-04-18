@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 class JooqChatServiceTest extends IntegrationTest {
-    @Autowired ChatService chatService;
+    @Autowired JooqChatService chatService;
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
