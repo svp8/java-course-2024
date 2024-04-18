@@ -29,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 import wiremock.com.fasterxml.jackson.databind.JsonNode;
 import wiremock.com.fasterxml.jackson.databind.ObjectMapper;
 import wiremock.com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -43,7 +44,7 @@ import static edu.java.client.StackOverflowClientImpl.SITE_STACKOVERFLOW;
 class StackUpdaterTest extends IntegrationTest {
 
     private StackOverflowClient stackOverflowClient =
-        new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder());
+        new StackOverflowClientImpl(wireMockServer.baseUrl(), WebClient.builder(), Retry.max(1000));
 
     @AfterAll
     static void end() {
@@ -66,7 +67,7 @@ class StackUpdaterTest extends IntegrationTest {
     private ChatRepository chatRepository;
 
     public static WireMockServer wireMockServer = new WireMockServer(9081);
-    private BotClient botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder());
+    private BotClient botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(10000));
     static String testUriComment = String.format("/questions/57626072/comments?%s", SITE_STACKOVERFLOW);
     static String testUriAnswer = String.format("/questions/57626072/answers?%s", SITE_STACKOVERFLOW);
     static String testUrlClient = "/send";

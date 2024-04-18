@@ -5,6 +5,8 @@ app:
     force-check-delay: PT10S
   database-access-type: jdbc
 spring:
+#  cache:
+#    type: none
   liquibase:
     enabled: false
   application:
@@ -23,16 +25,30 @@ spring:
 client:
   github:
     baseurl: https://api.github.com
-  stack:
+    retry:
+      enable: true
+      type: linear
+      base-delay-ms: 100
+      retry-on-codes: [ 404,500 ]
+  stackOverflow:
     baseurl: https://api.stackexchange.com/2.3/
+    retry:
+      enable: true
+      type: exponential
+      base-delay-ms: 100
+      retry-on-codes: [ 404 ]
   bot:
     baseurl: http://localhost:8090
+    retry:
+      enable: true
+      type: exponential
+      base-delay-ms: 100
+      retry-on-codes: [ 404,500 ]
 springdoc:
   swagger-ui:
     path: /swagger-ui
 server:
   port: 8081
-
-logging:
-  config: classpath:log4j2-plain.xml
+#logging:
+#  config: classpath:log4j2-plain.xml
 

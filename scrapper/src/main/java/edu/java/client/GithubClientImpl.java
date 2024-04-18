@@ -6,19 +6,24 @@ import edu.java.dto.github.RepositoryDto;
 import java.util.List;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 
 public class GithubClientImpl implements GitHubClient {
     public static final String BASE_URL = "https://api.github.com";
     private final WebClient webClient;
     private final String baseUrl;
+    private final Retry retry;
 
-    public GithubClientImpl(String baseUrl, WebClient.Builder builder) {
-        this.webClient = builder.baseUrl(ClientUtils.getBaseUrl(baseUrl, BASE_URL)).build();
+    public GithubClientImpl(String baseUrl, WebClient.Builder builder, Retry retry) {
+        this.webClient = builder.baseUrl(ClientUtils.getBaseUrl(baseUrl, BASE_URL))
+            .build();
+        this.retry = retry;
         this.baseUrl = baseUrl;
     }
 
     public GithubClientImpl(WebClient.Builder builder) {
         this.webClient = builder.baseUrl(BASE_URL).build();
+        this.retry = Retry.max(0);
         this.baseUrl = BASE_URL;
     }
 
@@ -28,7 +33,7 @@ public class GithubClientImpl implements GitHubClient {
             .get()
             .uri(String.format("/repos/%s/%s", owner, repositoryName))
             .retrieve();
-        RepositoryDto repositoryDto = responseSpec.bodyToMono(RepositoryDto.class).block();
+        RepositoryDto repositoryDto = responseSpec.bodyToMono(RepositoryDto.class).retryWhen(retry).block();
         return repositoryDto;
     }
 
@@ -39,7 +44,7 @@ public class GithubClientImpl implements GitHubClient {
             .uri(String.format("/repos/%s/%s/branches", owner, repositoryName))
             .retrieve();
         List<BranchDto> branches = responseSpec.bodyToMono(new ParameterizedTypeReference<List<BranchDto>>() {
-        }).block();
+        }).retryWhen(retry).block();
         return branches;
     }
 
@@ -50,7 +55,7 @@ public class GithubClientImpl implements GitHubClient {
             .uri(String.format("/repos/%s/%s/pulls", owner, repositoryName))
             .retrieve();
         List<PullRequestDto> list = responseSpec.bodyToMono(new ParameterizedTypeReference<List<PullRequestDto>>() {
-        }).block();
+        }).retryWhen(retry).block();
         return list;
     }
 
