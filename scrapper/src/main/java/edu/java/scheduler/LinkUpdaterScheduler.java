@@ -1,7 +1,7 @@
 package edu.java.scheduler;
 
 import edu.java.entity.LinkEntity;
-import edu.java.service.LinkService;
+import edu.java.repository.LinkRepository;
 import edu.java.updater.GitHubUpdater;
 import edu.java.updater.StackUpdater;
 import java.time.Duration;
@@ -20,18 +20,18 @@ public class LinkUpdaterScheduler {
     public static final String GITHUB_COM = "https://github.com";
     public static final String STACKOVERFLOW_COM = "https://stackoverflow.com";
     public static final int SECONDS = 20 * 60;
-    private final LinkService linkService;
+    private final LinkRepository linkRepository;
     private final GitHubUpdater gitHubUpdater;
     private final StackUpdater stackUpdater;
     private final Duration interval;
 
     public LinkUpdaterScheduler(
-        LinkService linkService,
+        LinkRepository linkRepository,
         GitHubUpdater gitHubUpdater,
         StackUpdater stackUpdater,
         @Value("${app.scheduler.delay}") Duration interval
     ) {
-        this.linkService = linkService;
+        this.linkRepository = linkRepository;
         this.gitHubUpdater = gitHubUpdater;
         this.stackUpdater = stackUpdater;
         this.interval = interval;
@@ -39,7 +39,7 @@ public class LinkUpdaterScheduler {
 
     @Scheduled(fixedDelayString = "${app.scheduler.interval}")
     public void update() {
-        List<LinkEntity> list = linkService.findAllLastUpdated(interval);
+        List<LinkEntity> list = linkRepository.findAllLastUpdated(interval);
         if (list != null) {
             for (LinkEntity linkEntity : list) {
                 if (linkEntity.getName().startsWith(GITHUB_COM)) {

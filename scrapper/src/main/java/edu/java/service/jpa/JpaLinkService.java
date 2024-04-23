@@ -15,7 +15,6 @@ import edu.java.service.LinkService;
 import edu.java.utils.LinkUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,9 +135,4 @@ public class JpaLinkService implements LinkService {
         return link;
     }
 
-    @Override
-    public List<LinkEntity> findAllLastUpdated(Duration interval) {
-
-        return linkRepository.findAllLastUpdated(interval.toSeconds());
-    }
 }

@@ -9,8 +9,6 @@ public interface BranchRepository {
 
     List<BranchEntity> getAllByLinkId(int linkId);
 
-    BranchEntity update(BranchEntity entity);
-
     BranchEntity add(BranchEntity entity);
 
     void delete(BranchEntity entity);

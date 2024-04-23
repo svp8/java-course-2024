@@ -19,22 +19,20 @@ public class JdbcChatService implements ChatService {
 
     @Override
     public void registerChat(long chatId) {
-        if (chatRepository.getChatById(chatId).isPresent()) {
+        try {
+            chatRepository.createChat(chatId);
+        } catch (Exception e) {
             throw new InvalidChatIdException(HttpStatus.BAD_REQUEST.value(), "Chat is already registered");
         }
-        chatRepository.createChat(chatId);
     }
 
     @Override
     public void unregisterChat(long chatId) {
-        if (chatRepository.getChatById(chatId).isEmpty()) {
-            throw new InvalidChatIdException(HttpStatus.BAD_REQUEST.value(), "Chat is not registered");
-        }
         chatRepository.deleteChat(chatId);
     }
 
     @Override
     public List<ChatEntity> findChatsByLinkId(int id) {
-        return chatLinkRepository.findChatsByLinkId(id);
+        return chatRepository.findChatsByLinkId(id);
     }
 }

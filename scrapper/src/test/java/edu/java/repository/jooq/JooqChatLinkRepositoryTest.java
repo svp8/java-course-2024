@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -23,11 +21,6 @@ class JooqChatLinkRepositoryTest extends IntegrationTest {
     private JooqLinkRepository linkRepository;
     @Autowired
     private JooqChatRepository chatRepository;
-
-    @DynamicPropertySource
-    static void properties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
-    }
 
     @BeforeEach
     void init() {
@@ -46,7 +39,7 @@ class JooqChatLinkRepositoryTest extends IntegrationTest {
         chatLinkRepository.create(1, linkEntity.getId());
         chatLinkRepository.create(1, linkEntity1.getId());
         //when
-        List<LinkEntity> actual = chatLinkRepository.findLinksByChatId(1);
+        List<LinkEntity> actual = linkRepository.findLinksByChatId(1);
         //then
         Assertions.assertEquals(expected, actual);
     }
@@ -62,7 +55,7 @@ class JooqChatLinkRepositoryTest extends IntegrationTest {
         chatLinkRepository.create(1, linkEntity.getId());
         chatLinkRepository.create(2, linkEntity.getId());
         //when
-        List<ChatEntity> actual = chatLinkRepository.findChatsByLinkId(linkEntity.getId());
+        List<ChatEntity> actual = chatRepository.findChatsByLinkId(linkEntity.getId());
         //then
         Assertions.assertEquals(expected, actual);
 
@@ -83,7 +76,7 @@ class JooqChatLinkRepositoryTest extends IntegrationTest {
         //when
         chatLinkRepository.remove(1, linkEntity.getId());
         //then
-        List<LinkEntity> actual = chatLinkRepository.findLinksByChatId(1);
+        List<LinkEntity> actual = linkRepository.findLinksByChatId(1);
         Assertions.assertEquals(1, actual.size());
         Assertions.assertEquals(expected.get(1), actual.get(0));
     }

@@ -47,9 +47,5 @@ public class StackOverflowClientImpl implements StackOverflowClient {
         return response;
     }
 
-    @Override
-    public String getBaseUrl() {
-        return null;
-    }
 }
 

@@ -59,8 +59,4 @@ public class GithubClientImpl implements GitHubClient {
         return list;
     }
 
-    @Override
-    public String getBaseUrl() {
-        return baseUrl;
-    }
 }
