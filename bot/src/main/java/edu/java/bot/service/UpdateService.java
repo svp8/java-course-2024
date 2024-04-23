@@ -24,9 +24,10 @@ public class UpdateService {
         if (!sendResponse.isOk()) {
             throw new SendMessageException(sendResponse.errorCode(), sendResponse.description());
         }
+
     }
 
-    public String formatUpdates(Link link, List<LinkUpdate> linkUpdates) {
+    public static String formatUpdates(Link link, List<LinkUpdate> linkUpdates) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(link.getUri().toString());
         stringBuilder.append("\n");

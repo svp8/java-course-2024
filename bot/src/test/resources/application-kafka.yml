@@ -1,7 +1,7 @@
 app:
   telegram-token: ${TELEGRAMTOKEN}
   kafka:
-    enabled: false
+    enabled: true
     topic: update
 springdoc:
   swagger-ui:

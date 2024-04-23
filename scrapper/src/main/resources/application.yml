@@ -1,11 +1,25 @@
 app:
   scheduler:
-    enable: false
-    interval: PT10S
+    enable: true
+    interval: PT1000S
+    delay: PT5S
     force-check-delay: PT10S
-  database-access-type: jooq
+  database-access-type: jpa
+  useQueue: true
+  kafka:
+    enabled: true
+    topic: update
+    partitions: 10
+    replicas: 1
 
 spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      retries: 0
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   cache:
     cache-names:
       - rate-limit-buckets

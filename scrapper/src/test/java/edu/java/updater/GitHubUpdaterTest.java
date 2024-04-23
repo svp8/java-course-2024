@@ -14,6 +14,7 @@ import edu.java.scrapper.IntegrationTest;
 import edu.java.service.BranchService;
 import edu.java.service.ChatService;
 import edu.java.service.LinkService;
+import edu.java.service.MessageService;
 import edu.java.service.PullService;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
@@ -53,8 +54,9 @@ class GitHubUpdaterTest extends IntegrationTest {
     private ChatRepository chatRepository;
 
     public static WireMockServer wireMockServer = new WireMockServer(9081);
-    private GithubClientImpl githubClient = new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder(), Retry.max(100));
-    private BotClient botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(100));
+    private static  GithubClientImpl githubClient;
+    private static BotClient botClient ;
+    static MessageService messageService;
     static String testUrlPull = "/repos/svp8/java-course-2024/pulls";
     static String testUrlBranch = "/repos/svp8/java-course-2024/branches";
     static String testUrlClient = "/send";
@@ -62,7 +64,8 @@ class GitHubUpdaterTest extends IntegrationTest {
     @BeforeAll
     static void init() {
         wireMockServer.start();
-
+        githubClient=new GithubClientImpl(wireMockServer.baseUrl(), WebClient.builder(), Retry.max(100));
+        botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(100));
         List<BranchDto> expected = List.of(new BranchDto("test"), new BranchDto("test2"));
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         JsonNode node = mapper.valueToTree(expected);
@@ -85,6 +88,7 @@ class GitHubUpdaterTest extends IntegrationTest {
 
         wireMockServer.stubFor(WireMock.post(urlEqualTo(testUrlClient)).willReturn(aResponse().withStatus(200)
             .withHeader(HttpHeaders.CONNECTION, "close")));
+        messageService=new MessageService(null,botClient,false);
     }
 
     @AfterAll
@@ -110,7 +114,7 @@ class GitHubUpdaterTest extends IntegrationTest {
             pullRepository,
             branchRepository,
             chatService,
-            botClient, linkService
+            messageService, linkService
         );
 
         gitHubUpdater.update(linkEntity);

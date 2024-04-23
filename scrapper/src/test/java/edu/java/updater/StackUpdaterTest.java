@@ -19,6 +19,7 @@ import edu.java.service.CommentService;
 import edu.java.service.LinkService;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import edu.java.service.MessageService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -67,7 +68,8 @@ class StackUpdaterTest extends IntegrationTest {
     private ChatRepository chatRepository;
 
     public static WireMockServer wireMockServer = new WireMockServer(9081);
-    private BotClient botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(10000));
+    private static BotClient botClient ;
+    static MessageService messageService;
     static String testUriComment = String.format("/questions/57626072/comments?%s", SITE_STACKOVERFLOW);
     static String testUriAnswer = String.format("/questions/57626072/answers?%s", SITE_STACKOVERFLOW);
     static String testUrlClient = "/send";
@@ -76,7 +78,7 @@ class StackUpdaterTest extends IntegrationTest {
     @BeforeAll
     static void init() {
         wireMockServer.start();
-
+        botClient = new BotClient(wireMockServer.baseUrl(), WebClient.builder(),Retry.max(10000));
         AnswerDto[] expectedDto =
             new AnswerDto[] {new AnswerDto(1, true, offsetDateTime, 12, offsetDateTime),
                 new AnswerDto(2, true, offsetDateTime, 12, offsetDateTime)};
@@ -107,6 +109,7 @@ class StackUpdaterTest extends IntegrationTest {
                 .withJsonBody(nodeComment)));
         wireMockServer.stubFor(WireMock.post(urlEqualTo(testUrlClient)).willReturn(aResponse().withStatus(200)
             .withHeader(HttpHeaders.CONNECTION, "close")));
+        messageService=new MessageService(null,botClient,false);
     }
 
     @Test
@@ -122,7 +125,7 @@ class StackUpdaterTest extends IntegrationTest {
 
             commentService, answerService, chatService,
             linkService,
-            botClient
+            messageService
         );
 
         stackUpdater.update(linkEntity);

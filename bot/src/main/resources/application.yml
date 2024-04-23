@@ -1,13 +1,31 @@
 app:
   telegram-token: ${TELEGRAMTOKEN}
+  kafka:
+    enabled: true
+    topic: update
 springdoc:
   swagger-ui:
     path: /swagger-ui
 spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      properties:
+        spring.json.type.mapping: "edu.java.dto.Update: edu.java.bot.model.scrapper.Update"
+        spring.json.trusted.packages: "*"
+      group-id: 1
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
   application:
     name: bot
   jackson:
     time-zone: UTC
+  cache:
+    cache-names:
+      - rate-limit-buckets
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
 client:
   scrapper:
     baseurl: http://localhost:8081
