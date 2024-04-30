@@ -7,7 +7,9 @@ on:
       - .github/workflows/scrapper.yml
       - link-parser/**
       - scrapper/**
-
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: scrapper
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,6 +27,18 @@ jobs:
 
       - name: maven build
         run: mvn -pl scrapper -am package
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Build Image'
+        run: |
+          docker build scrapper/. --tag ghcr.io/svp8/scrapper:latest
+          docker push ghcr.io/svp8/scrapper:latest
 
       - id: jacoco
         uses: madrapps/jacoco-report@v1.6.1
